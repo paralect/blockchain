@@ -1,0 +1,76 @@
+diff --git a/contracts/currency/currency.abi b/contracts/currency/currency.abi
+index 2279689..58d507f 100644
+--- a/contracts/currency/currency.abi
++++ b/contracts/currency/currency.abi
+@@ -13,6 +13,12 @@
+         "quantity": "uint64"
+       }
+     },{
++      "name": "givehundred",
++      "base": "",
++      "fields": {
++        "to": "account_name",
++      }
++    },{
+       "name": "account",
+       "base": "",
+       "fields": {
+@@ -24,6 +30,9 @@
+   "actions": [{
+       "action_name": "transfer",
+       "type": "transfer"
++    },{
++      "action_name": "givehundred",
++      "type": "givehundred"
+     }
+   ],
+   "tables": [{
+diff --git a/contracts/currency/currency.cpp b/contracts/currency/currency.cpp
+index dd21b9b..ab445cd 100644
+--- a/contracts/currency/currency.cpp
++++ b/contracts/currency/currency.cpp
+@@ -33,6 +33,19 @@ namespace TOKEN_NAME {
+       store_account( transfer_msg.to, to );
+    }
+ 
++    void apply_givehundred( const TOKEN_NAME::givehundred& transfer_msg ) {
++      require_notice( transfer_msg.to);      
++
++      auto from = get_account( N(currency) );
++      auto to   = get_account( transfer_msg.to );
++
++      from.balance -= currency_tokens(100ull);
++      to.balance   += currency_tokens(100ull);
++
++      store_account( N(currency), from );      
++      store_account( transfer_msg.to, to );
++   }
++
+ }  // namespace TOKEN_NAME
+ 
+ using namespace TOKEN_NAME;
+@@ -51,6 +64,8 @@ extern "C" {
+        if( code == N(currency) ) {
+           if( action == N(transfer) ) 
+              TOKEN_NAME::apply_currency_transfer( current_message< TOKEN_NAME::transfer >() );
++          if( action == N(givehundred) ) 
++             TOKEN_NAME::apply_givehundred( current_message< TOKEN_NAME::givehundred >() );             
+        }
+     }
+ }
+diff --git a/contracts/currency/currency.hpp b/contracts/currency/currency.hpp
+index 1976348..f71a666 100644
+--- a/contracts/currency/currency.hpp
++++ b/contracts/currency/currency.hpp
+@@ -57,6 +57,11 @@ namespace TOKEN_NAME {
+       currency_tokens    quantity;
+    };
+ 
++
++  struct givehundred {
++    account_name    to;
++  };  
++
+    /**
+     *  @brief row in account table stored within each scope
+     *  @abi table
