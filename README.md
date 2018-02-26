@@ -8,7 +8,7 @@ Welcome to the blockchain wiki!
 
 **Table of Contents:**
 
-0. [Sources & Good Reads](#0)
+0. [References & Good Reads](#0)
 1. [What is Blockchain?](#1)
 2. [Comparison of smart-contract platforms](#2)
 3. [Selected smart-contract platform](#3)
