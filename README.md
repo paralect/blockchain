@@ -8,12 +8,43 @@ Welcome to the blockchain wiki!
 
 **Table of Contents:**
 
+0. [Sources & Good Reads](#0)
 1. [What is Blockchain?](#1)
 2. [Comparison of smart-contract platforms](#2)
 3. [Selected smart-contract platform](#3)
 4. [Ideas for smart contacts](#4) 
 5. [...](#5)
 -----------
+
+<a name="0"></a>  
+## 0. References & Good Reads
+
+**Blockchain**    
+Glossary: https://github.com/ethereum/wiki/wiki/Glossary   
+Blockchain at Berkeley Uni.: https://www.youtube.com/channel/UC5sgoRfoSp3jeX4DEqKLwKg/playlists
+
+
+**Bitcoin**  
+Satoshi Nakamoto's original paper: https://bitcoin.org/bitcoin.pdf  
+
+**Ethereum**  
+Ethereum Overview : https://blockgeeks.com/guides/ethereum/  
+Wiki: https://github.com/ethereum/wiki/wiki  
+White-Paper: https://github.com/ethereum/wiki/wiki/White-Paper  
+Design-Rationale: https://github.com/ethereum/wiki/wiki/Design-Rationale  
+Yellow Paper: https://ethereum.github.io/yellowpaper/paper.pdf  
+Decentralized-apps-(dapps): https://github.com/ethereum/wiki/wiki/Decentralized-apps-(dapps)  
+
+**EOS**  
+EOS Overview: https://blockgeeks.com/guides/eos-blockchain  
+Wiki: https://github.com/EOSIO/eos/wiki  
+White Paper: https://github.com/EOSIO/Documentation/blob/master/TechnicalWhitePaper.md
+
+
+**Smart Contracts**  
+EOS Smart Contracts: https://github.com/EOSIO/eos/wiki/Smart%20Contract  
+Ethereum Smart Contracts: https://solidity.readthedocs.io/en/develop/introduction-to-smart-contracts.html#  
+Video: [Ethereum - How to Create and Publish a Smart Contract](https://www.youtube.com/watch?v=TC-bDQZbXd0&list=PLcpJWTGPhadatTqKVM7_Ra_HhFtZ0SBi8&index=3)
 
 <a name="1"></a>  
 ## 1. What is Blockchain?
