@@ -122,7 +122,22 @@ Source: http://www.relativelyinteresting.com/wp-content/uploads/2016/06/how-a-bi
 <a name="3"></a>  
 ## 3. Selected smart-contract platform 
 
-...
+**Assuming (!)** EOS will implement all the features they claim (ETA: June, 2018), EOS almost certainly seems to be right platform. 
+
+However, since EOS is still under development, and although Ethereum has some unacceptible limitations, currently Ethereum can be a starting point for smart contract development since they are the only live blockchain network with working smart contracts. 
+
+<a name="4"></a>  
+## 4. Ideas for smart contacts 
+
+### a. Simple Voting DApp with Ethereum and React  
+
+Conceptually, subject of voting seems to be a perfect fit for blockchain.
+
+<h1>
+  <img src="https://raw.githubusercontent.com/simsekgokhan/Voting-DApp-Ethereum/master/src/screenshot.jpg" width="700">  
+</h1>
+
+More: https://github.com/simsekgokhan/Voting-DApp-Ethereum
 
 ...
 
