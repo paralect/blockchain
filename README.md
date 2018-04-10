@@ -15,7 +15,9 @@ Welcome to the blockchain wiki!
    c. [How Blockchain works](#1c)  
 2. [Comparison of smart-contract platforms](#2)
 3. [Selected smart-contract platform](#3)
-4. [Ideas for smart contacts](#4) 
+4. [Ideas for smart contacts](#4)  
+   a. [Simple Voting DApp with Ethereum and React](#4a)  
+   b. [Token Sale (ICO) Website](#4b)
 5. [To Discuss](#5)
 -----------
 
@@ -128,7 +130,7 @@ However, since EOS is still under development, and although Ethereum has some un
 
 <a name="4"></a>  
 ## 4. Ideas for smart contacts 
-
+<a name="4a"></a>  
 ### a. Simple Voting DApp with Ethereum and React  
 
 Conceptually, subject of voting seems to be a perfect fit for blockchain.
@@ -139,8 +141,27 @@ Conceptually, subject of voting seems to be a perfect fit for blockchain.
 
 More: https://github.com/simsekgokhan/Voting-DApp-Ethereum
 
-...
+<a name="4b"></a>  
+### b. Token Sale (ICO) Website
 
+Raw information from emails:  
+
+""   
+Dmitry Schetnikovich:  
+  I had a talk with Alex Shkor recently and he proposed an additional idea to consider: Token Sale (or ICO) website in Etherium or EOS networks. There are a lot of examples and materials about this process. For instance: [Token Sale Smart Contracts](https://blog.bluzelle.com/token-sale-smart-contracts-6ab03f7cda2a) ([GitHub](https://github.com/bluzelle/ico-smart-contracts)), [EOS ICO Step by Step guide](https://steemit.com/eos/@nadejde/eos-ico-step-by-step-guide-beginner) etc.
+
+People initiate ICO (Token Sale) even before they complete implementation of their application (or "protocol"). This is a kind of a service that Paralect can provide. According to Alex, process of implementation of Token Sale Website is straightforward, after you did it for the first time. 
+
+Token Sale / ICO Website (simplified):
+
+1) Presents an idea how we are going to change the world (we skip this step, because this content will be provided by the client)
+2) Explains how this ICO is going to work and what are the rules (together with client we need to find this rules)
+3) Has a button "Buy this tokens".
+4) Allows you to exchange your current digital cons or tokens (ETH, BTC, etc.) for the new one. 
+
+It makes sense to implement it in both networks: for Etherium and EOS. Although Alex thinks, that in a couple of months EOS will go public and there will be a lot of demand for "EOS Token Sale / ICO" website. 
+
+"" 
 
 <a name="5"></a>  
 
