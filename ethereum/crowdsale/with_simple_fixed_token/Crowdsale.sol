@@ -12,7 +12,7 @@ contract Crowdsale {
     uint public deadline;
     uint public price;
     token public tokenReward;
-    mapping(address => uint256) public balanceOf;
+    mapping(address => uint256) public balanceOf;   // eth balance of donors
     bool public fundingGoalReached = false;
     bool public crowdsaleClosed = false;
 
