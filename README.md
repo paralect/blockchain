@@ -192,6 +192,11 @@ Ethereum Wallet or Bitcoin Core like desktop app for EOS blockchain.
 - Block explorer  
 - Transaction explorer  
 
+**E.g.: Screenshot from Ethereum Wallet: Contract deployment**
+
+<img src="https://github.com/paralect/blockchain/blob/master/ideas/EOS_wallet_explorer_IDE/Ethereum-Wallet-Screenshot.png" width="900" />    
+
+
 
 <a name="5"></a>  
 
