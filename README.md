@@ -12,12 +12,13 @@ Welcome to the blockchain wiki!
 1. [Blockchain](#1)  
    a. [What is Blockchain?](#1a)  
    b. [Block Structure](#1b)  
-   c. [How Blockchain works](#1c)  
+   c. [How Blockchain works](#1c)    
 2. [Comparison of smart-contract platforms](#2)
 3. [Selected smart-contract platform](#3)
 4. [Ideas for smart contacts](#4)  
    a. [Simple Voting DApp with Ethereum and React](#4a)  
-   b. [Token Sale (ICO) Website](#4b)
+   b. [Token Sale (ICO) Website](#4b)  
+   c. [Crowdsale DApp](#4c)
 5. [To Discuss](#5)
 -----------
 
@@ -70,7 +71,8 @@ Source: https://en.wikipedia.org/wiki/Blockchain
 
 **i. Basic block structure**
 
-<img src="https://github.com/paralect/blockchain/blob/master/wiki/images/blockhain-block.png" width="900" />   
+<img src="https://github.com/paralect/blockchain/blob/master/wiki/images/blockhain-block.
+" width="900" />   
  
 Source: https://medium.com/@lhartikk/a-blockchain-in-200-lines-of-code-963cc1cc0e54  
 
@@ -131,7 +133,7 @@ However, since EOS is still under development, and although Ethereum has some un
 <a name="4"></a>  
 ## 4. Ideas for smart contacts 
 <a name="4a"></a>  
-### a. Simple Voting DApp with Ethereum and React  
+### 4.a. Simple Voting DApp with Ethereum and React  
 
 Conceptually, subject of voting seems to be a perfect fit for blockchain.
 
@@ -142,7 +144,7 @@ Conceptually, subject of voting seems to be a perfect fit for blockchain.
 More: https://github.com/simsekgokhan/Voting-DApp-Ethereum
 
 <a name="4b"></a>  
-### b. Token Sale (ICO) Website
+### 4.b. Token Sale (ICO) Website
 
 Raw information from emails:  
 
@@ -162,6 +164,20 @@ Token Sale / ICO Website (simplified):
 It makes sense to implement it in both networks: for Etherium and EOS. Although Alex thinks, that in a couple of months EOS will go public and there will be a lot of demand for "EOS Token Sale / ICO" website. 
 
 "" 
+
+<a name="4c"></a>  
+### 4.c. Simple Crowdsale Dapp (Crowdsale and Custom Token contracts)  
+
+This Crowdsale dapp consists of two contracts: Crowdsale and Token contracts.  
+For this dapp, modified versions of official Ethereum Crowdsale and Token templates in the links below are used.  
+
+- https://ethereum.org/crowdsale  
+- https://www.ethereum.org/token
+
+**How this Dapp works:**  
+
+<img src="https://github.com/paralect/blockchain/blob/master/ethereum/crowdsale/summary_diagram_of_crowdsale_with_simple_fixed_token.png" width="900" />    
+
 
 <a name="5"></a>  
 
