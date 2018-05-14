@@ -18,7 +18,8 @@ Welcome to the blockchain wiki!
 4. [Ideas for smart contacts](#4)  
    a. [Simple Voting DApp with Ethereum and React](#4a)  
    b. [Token Sale (ICO) Website](#4b)  
-   c. [Crowdsale DApp](#4c)
+   c. [Crowdsale DApp](#4c)  
+   d. [EOS Wallet or Explorer/IDE](#4d)
 5. [To Discuss](#5)
 -----------
 
@@ -177,6 +178,19 @@ For this dapp, modified versions of official Ethereum Crowdsale and Token templa
 **How this Dapp works:**  
 
 <img src="https://github.com/paralect/blockchain/blob/master/ethereum/crowdsale/summary_diagram_of_crowdsale_with_simple_fixed_token.png" width="900" />    
+
+<a name="4d"></a>  
+### 4.d. EOS Wallet or Explorer/IDE
+
+Ethereum Wallet or Bitcoin Core like desktop app for EOS blockchain. 
+
+**Possible Features:** 
+- Account explorer / management  
+- Contract method executions  
+- Contract IDE/compilation (using eosio executables)   
+- Contract deployment 
+- Block explorer  
+- Transaction explorer  
 
 
 <a name="5"></a>  
