@@ -70,16 +70,13 @@ Source: https://en.wikipedia.org/wiki/Blockchain
 
 ### **b) Block structure:**  
 
-**i. Basic block structure**
+**i. Basic block structure**   
 
-<img src="https://github.com/paralect/blockchain/blob/master/wiki/images/blockhain-block.
-" width="900" />   
- 
+<img src="https://github.com/paralect/blockchain/blob/master/wiki/images/blockhain-block.png" width="900" />   
+
 Source: https://medium.com/@lhartikk/a-blockchain-in-200-lines-of-code-963cc1cc0e54  
 
 **ii. Block structure in Bitcoin blockchain**  
-
-<img src="https://github.com/paralect/blockchain/blob/master/wiki/images/block_bitcoin.jpg" width="560" />   
  
 Source: http://computersecuritypgp.blogspot.com/2016/05/what-is-blockchain.html
 
@@ -88,7 +85,6 @@ Source: http://computersecuritypgp.blogspot.com/2016/05/what-is-blockchain.html
 ### **c) How Blockchain works:**
 
 **Simple**  
-<img src="https://github.com/paralect/blockchain/blob/master/wiki/images/how-blockchain-works-simple.png" width="700" />    
 
 Source: https://bitsapphire.com/wp-content/uploads/2017/01/Blockchain-industry-innovation-or-overhyped.png
 
