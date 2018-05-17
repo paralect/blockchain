@@ -16,10 +16,10 @@ Welcome to the blockchain wiki!
 2. [Comparison of smart-contract platforms](#2)
 3. [Selected smart-contract platform](#3)
 4. [Ideas for smart contacts](#4)  
-   a. [Simple Voting DApp with Ethereum and React (Updated)](#4a)  
+   a. [Simple Voting DApp with Ethereum and React](#4a) (Updated)  
    b. [Token Sale (ICO) Website](#4b)  
-   c. [Crowdsale (ICO) DApp (New)](#4c)  
-   d. [EOS Wallet or Explorer/IDE (New)](#4d)
+   c. [Crowdsale (ICO) DApp](#4c) (New)  
+   d. [EOS Wallet or Explorer/IDE](#4d) (New)
 5. [To Discuss](#5)
 -----------
 
