@@ -16,10 +16,10 @@ Welcome to the blockchain wiki!
 2. [Comparison of smart-contract platforms](#2)
 3. [Selected smart-contract platform](#3)
 4. [Ideas for smart contacts](#4)  
-   a. [Simple Voting DApp with Ethereum and React](#4a)  
+   a. [Simple Voting DApp with Ethereum and React (Updated)](#4a)  
    b. [Token Sale (ICO) Website](#4b)  
-   c. [Crowdsale DApp](#4c)  
-   d. [EOS Wallet or Explorer/IDE](#4d)
+   c. [Crowdsale (ICO) DApp (New)](#4c)  
+   d. [EOS Wallet or Explorer/IDE (New)](#4d)
 5. [To Discuss](#5)
 -----------
 
@@ -139,7 +139,7 @@ However, since EOS is still under development, and although Ethereum has some un
 Conceptually, subject of voting seems to be a perfect fit for blockchain.
 
 <h1>
-  <img src="https://raw.githubusercontent.com/simsekgokhan/Voting-DApp-Ethereum/master/src/screenshot.jpg" width="700">  
+  <img src="https://raw.githubusercontent.com/simsekgokhan/Voting-DApp-Ethereum/master/src/screenshot.jpg" width="900">  
 </h1>
 
 More: https://github.com/simsekgokhan/Voting-DApp-Ethereum
@@ -167,9 +167,20 @@ It makes sense to implement it in both networks: for Etherium and EOS. Although 
 "" 
 
 <a name="4c"></a>  
-### 4.c. Simple Crowdsale Dapp (Crowdsale and Custom Token contracts)  
+### 4.c. Simple Crowdsale (ICO) Dapp (Crowdsale and Custom Token contracts)  
 
-This Crowdsale dapp consists of two contracts: Crowdsale and Token contracts.  
+This Crowdsale dapp consists of two contracts: Crowdsale (ICO) and Token contracts.  
+
+- [master/ethereum/crowdsale/with_simple_fixed_token/Crowdsale.sol](https://github.com/paralect/blockchain/blob/master/ethereum/crowdsale/with_simple_fixed_token/Crowdsale.sol)  
+- [master/ethereum/crowdsale/with_simple_fixed_token/TokenERC20.sol](https://github.com/paralect/blockchain/blob/master/ethereum/crowdsale/with_simple_fixed_token/TokenERC20.sol)  
+
+For more advanced version of this dapp, see below:  
+
+- [master/ethereum/crowdsale/with_adv_token/Crowdsale-2.sol](https://github.com/paralect/blockchain/blob/master/ethereum/crowdsale/with_adv_token/Crowdsale-2.sol)  
+- [master/ethereum/crowdsale/with_adv_token/MyAdvancedToken.sol](https://github.com/paralect/blockchain/blob/master/ethereum/crowdsale/with_adv_token/MyAdvancedToken.sol)  
+
+
+**Note:** 
 For this dapp, modified versions of official Ethereum Crowdsale and Token templates in the links below are used.  
 
 - https://ethereum.org/crowdsale  
