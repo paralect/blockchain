@@ -78,6 +78,8 @@ Source: https://medium.com/@lhartikk/a-blockchain-in-200-lines-of-code-963cc1cc0
 
 **ii. Block structure in Bitcoin blockchain**  
  
+<img src="https://github.com/paralect/blockchain/blob/master/wiki/images/block_bitcoin.jpg" width="500" />   
+ 
 Source: http://computersecuritypgp.blogspot.com/2016/05/what-is-blockchain.html
 
 <a name="1c"></a>  
