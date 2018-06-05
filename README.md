@@ -88,6 +88,8 @@ Source: http://computersecuritypgp.blogspot.com/2016/05/what-is-blockchain.html
 
 **Simple**  
 
+![](https://github.com/paralect/blockchain/blob/master/wiki/images/how-blockchain-works-simple.png)
+
 Source: https://bitsapphire.com/wp-content/uploads/2017/01/Blockchain-industry-innovation-or-overhyped.png
 
 **In Detail:**
