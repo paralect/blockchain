@@ -3,6 +3,8 @@ pragma solidity ^0.4.16;
 
 interface token {
     function transfer(address receiver, uint amount) external;
+    function burn(uint256 amount) external;
+    function balanceOf(address addr) external returns (uint256 amount);
 }
 
 contract Crowdsale {
@@ -15,6 +17,7 @@ contract Crowdsale {
     mapping(address => uint256) public tokenBalanceOf;   // token balance of donors
     bool fundingGoalReached = false;
     bool crowdsaleClosed = false;
+    bool public unsoldtokensBurnt = false;
 
     event GoalReached(address recipient, uint totalAmountRaised);
     event FundTransfer(address backer, uint amount, bool isContribution);
@@ -103,4 +106,11 @@ contract Crowdsale {
         }
     }
 
+    function burnUnsoldTokens() afterDeadline public {
+        require(!unsoldtokensBurnt);
+        unsoldtokensBurnt = true;        
+        uint256 amount = tokenReward.balanceOf(this);
+        tokenReward.burn(amount);
+        // Todo: Handle return of burn function
+    }    
 }
