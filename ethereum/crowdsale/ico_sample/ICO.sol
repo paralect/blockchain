@@ -8,16 +8,20 @@ interface token {
 }
 
 contract Crowdsale {
+    address public owner;
     address public beneficiary;
     uint public fundingGoal;
     uint public amountRaised;
+    uint public tokensForSale;
+    uint public tokensSold;
     uint public deadline;
     uint public tokensPerWei;
     token public tokenReward;
     mapping(address => uint256) public tokenBalanceOf;   // token balance of donors
     bool fundingGoalReached = false;
     bool crowdsaleClosed = false;
-    bool public unsoldtokensBurnt = false;
+    bool public unsoldTokensBurnt = false;
+    bool public unsoldTokensTransferred = false;
 
     event GoalReached(address recipient, uint totalAmountRaised);
     event FundTransfer(address backer, uint amount, bool isContribution);
@@ -34,6 +38,7 @@ contract Crowdsale {
         uint tokensForOneWei,
         address addressOfTokenUsedAsReward
     ) public {
+        owner = msg.sender;
         beneficiary = ifSuccessfulSendTo;
         fundingGoal = fundingGoalInEthers * 1 ether;        // 1 ether == 1,000,000,000,000,000,000
         deadline = now + durationInMinutes * 1 minutes;
@@ -49,12 +54,20 @@ contract Crowdsale {
     function () payable public {
         require(now < deadline);
         uint amount = msg.value;
-        tokenBalanceOf[msg.sender] += amount * tokensPerWei;
+        uint tokens = amount * tokensPerWei;
+        tokenBalanceOf[msg.sender] += tokens;
         amountRaised += amount;
+        tokensSold += tokens;
     }
 
     modifier afterDeadline() { 
         if (now >= deadline) _; 
+    }
+
+    function setTokensForSale() public {
+        require(msg.sender == owner);
+        require(0 == tokensForSale);    
+        tokensForSale = tokenReward.balanceOf(this);
     }
 
     /**
@@ -107,10 +120,20 @@ contract Crowdsale {
     }
 
     function burnUnsoldTokens() afterDeadline public {
-        require(!unsoldtokensBurnt);
-        unsoldtokensBurnt = true;        
-        uint256 amount = tokenReward.balanceOf(this);
-        tokenReward.burn(amount);
+        require(msg.sender == owner);
+        require(!unsoldTokensBurnt);
+        unsoldTokensBurnt = true;        
+        uint256 unsoldTokens = tokensForSale - tokensSold;
+        tokenReward.burn(unsoldTokens);
         // Todo: Handle return of burn function
     }    
+
+    function transferUnsoldTokens(address toAddress) afterDeadline public {        
+        require(msg.sender == owner);
+        require(!unsoldTokensTransferred);
+        unsoldTokensTransferred = true;                
+        uint256 unsoldTokens = tokensForSale - tokensSold;
+        tokenReward.transfer(toAddress, unsoldTokens);
+        emit FundTransfer(toAddress, unsoldTokens, true);        
+    }
 }
