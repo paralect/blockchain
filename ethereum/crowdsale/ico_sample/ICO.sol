@@ -10,9 +10,13 @@ interface token {
 contract Crowdsale {
     address public beneficiary;
     uint public fundingGoal;
-    uint public amountRaised;
-    uint public deadline;
-    uint public tokensPerWei;
+    uint public amountRaisedPreIco;
+    uint public amountRaisedIco;
+    uint public amountRaisedTotal;
+    uint public preIcoDeadline;    
+    uint public icoDeadline;
+    uint public tokensPerWeiPreIco;
+    uint public tokensPerWeiIco;
     token public tokenReward;
     mapping(address => uint256) public tokenBalanceOf;   // token balance of donors
     bool fundingGoalReached = false;
@@ -30,14 +34,18 @@ contract Crowdsale {
     function Crowdsale(
         address ifSuccessfulSendTo,
         uint fundingGoalInEthers,
-        uint durationInMinutes,
-        uint tokensForOneWei,
+        uint preIcoDurationInMinutes,
+        uint icoDurationInMinutes,
+        uint tokensForOneWeiPreIco,
+        uint tokensForOneWeiIco,
         address addressOfTokenUsedAsReward
     ) public {
         beneficiary = ifSuccessfulSendTo;
         fundingGoal = fundingGoalInEthers * 1 ether;        // 1 ether == 1,000,000,000,000,000,000
-        deadline = now + durationInMinutes * 1 minutes;
-        tokensPerWei = tokensForOneWei;      // 1 wei -> 1000 tokens for now (0.001 eth == 1x10^18 tokens)
+        preIcoDeadline = now + preIcoDurationInMinutes * 1 minutes;
+        icoDeadline = preIcoDeadline + icoDurationInMinutes * 1 minutes;
+        tokensPerWeiPreIco = tokensForOneWeiPreIco; // 1 wei -> 1000 tokens for now (0.001 eth == 1x10^18 tokens)
+        tokensPerWeiIco = tokensForOneWeiIco;       // 1 wei -> 500 tokens for now (0.002 eth == 1x10^18 tokens)
         tokenReward = token(addressOfTokenUsedAsReward);    // instantiate a contract at a given address
     }
 
@@ -49,13 +57,23 @@ contract Crowdsale {
     function () payable public {
         require(!crowdsaleClosed);
         uint amount = msg.value;
-        tokenBalanceOf[msg.sender] += amount * tokensPerWei;
-        amountRaised += amount;
+        
+        if(now < preIcoDeadline){
+            tokenBalanceOf[msg.sender] += amount * tokensPerWeiPreIco;
+            amountRaisedPreIco += amount;
+        }
+
+        if(now > preIcoDeadline && now < icoDeadline) {
+            tokenBalanceOf[msg.sender] += amount * tokensPerWeiIco;
+            amountRaisedIco += amount;
+        }
+        
+        amountRaisedTotal += amount;
     }
 
     modifier afterDeadline() { 
-        if (now >= deadline) _; 
-    }
+        if (now >= icoDeadline) _; 
+    }    
 
     /**
      * Check if goal was reached
@@ -97,8 +115,8 @@ contract Crowdsale {
      */
     function withdrawFunds() afterDeadline public {
         if (beneficiary == msg.sender) {
-            if (beneficiary.send(amountRaised)) {
-                emit FundTransfer(beneficiary, amountRaised, false);
+            if (beneficiary.send(amountRaisedTotal)) {
+                emit FundTransfer(beneficiary, amountRaisedTotal, false);
             } else {
                 //If we fail to send the funds to beneficiary, unlock funders balance
                 fundingGoalReached = false;
