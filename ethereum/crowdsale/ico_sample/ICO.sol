@@ -10,15 +10,9 @@ interface token {
 contract Crowdsale {
     address public beneficiary;
     uint public fundingGoal;
-    uint public amountRaisedPreIco;
-    uint public amountRaisedIco;
-    uint public amountRaisedTotal;
-    uint public maxTokensToSellInPreIco;
-    uint public tokensSoldInPreIco;
-    uint public preIcoDeadline;    
-    uint public icoDeadline;
-    uint public tokensPerWeiPreIco;
-    uint public tokensPerWeiIco;
+    uint public amountRaised;
+    uint public deadline;
+    uint public tokensPerWei;
     token public tokenReward;
     mapping(address => uint256) public tokenBalanceOf;   // token balance of donors
     bool fundingGoalReached = false;
@@ -36,20 +30,14 @@ contract Crowdsale {
     function Crowdsale(
         address ifSuccessfulSendTo,
         uint fundingGoalInEthers,
-        uint preIcoDurationInMinutes,
-        uint icoDurationInMinutes,
-        uint tokensForOneWeiPreIco,
-        uint tokensForOneWeiIco,
-        uint maximumTokensToSellInPreIco,
+        uint durationInMinutes,
+        uint tokensForOneWei,
         address addressOfTokenUsedAsReward
     ) public {
         beneficiary = ifSuccessfulSendTo;
         fundingGoal = fundingGoalInEthers * 1 ether;        // 1 ether == 1,000,000,000,000,000,000
-        preIcoDeadline = now + preIcoDurationInMinutes * 1 minutes;
-        icoDeadline = preIcoDeadline + icoDurationInMinutes * 1 minutes;
-        tokensPerWeiPreIco = tokensForOneWeiPreIco; // 1 wei -> 1000 tokens for now (0.001 eth == 1x10^18 tokens)
-        tokensPerWeiIco = tokensForOneWeiIco;       // 1 wei -> 500 tokens for now (0.002 eth == 1x10^18 tokens)
-        maxTokensToSellInPreIco = maximumTokensToSellInPreIco * 1 ether;
+        deadline = now + durationInMinutes * 1 minutes;
+        tokensPerWei = tokensForOneWei;      // 1 wei -> 1000 tokens for now (0.001 eth == 1x10^18 tokens)
         tokenReward = token(addressOfTokenUsedAsReward);    // instantiate a contract at a given address
     }
 
@@ -59,40 +47,15 @@ contract Crowdsale {
      * The function without name is the default function that is called whenever anyone sends funds to a contract
      */
     function () payable public {
-        require(now < icoDeadline);
+        require(!crowdsaleClosed);
         uint amount = msg.value;
-        
-        if(now < preIcoDeadline){
-            buyTokensPreIco(amount);
-        }
-        else if(now > preIcoDeadline && now < icoDeadline) {
-            buyTokensIco(amount);
-        } 
-        else {
-            revert(); 
-        }
-        
-        amountRaisedTotal += amount;
+        tokenBalanceOf[msg.sender] += amount * tokensPerWei;
+        amountRaised += amount;
     }
-
-    function buyTokensPreIco(uint amount) internal {
-        require(now < preIcoDeadline);
-        uint tokensToSell = amount * tokensPerWeiPreIco;
-        require(tokensSoldInPreIco + tokensToSell <= maxTokensToSellInPreIco);       
-        tokenBalanceOf[msg.sender] += tokensToSell;
-        tokensSoldInPreIco += tokensToSell;
-        amountRaisedPreIco += amount;  
-    }
-    
-    function buyTokensIco(uint amount) internal {
-        require(now > preIcoDeadline && now < icoDeadline);
-        tokenBalanceOf[msg.sender] += amount * tokensPerWeiIco;
-        amountRaisedIco += amount;
-    }    
 
     modifier afterDeadline() { 
-        if (now >= icoDeadline) _; 
-    }    
+        if (now >= deadline) _; 
+    }
 
     /**
      * Check if goal was reached
@@ -134,8 +97,8 @@ contract Crowdsale {
      */
     function withdrawFunds() afterDeadline public {
         if (beneficiary == msg.sender) {
-            if (beneficiary.send(amountRaisedTotal)) {
-                emit FundTransfer(beneficiary, amountRaisedTotal, false);
+            if (beneficiary.send(amountRaised)) {
+                emit FundTransfer(beneficiary, amountRaised, false);
             } else {
                 //If we fail to send the funds to beneficiary, unlock funders balance
                 fundingGoalReached = false;
