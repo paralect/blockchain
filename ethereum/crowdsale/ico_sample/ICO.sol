@@ -17,14 +17,22 @@ contract Crowdsale {
     uint public deadline;
     uint public tokensPerWei;
     token public tokenReward;
-    mapping(address => uint256) public tokenBalanceOf;   // token balance of donors
     bool fundingGoalReached = false;
     bool crowdsaleClosed = false;
     bool public unsoldTokensBurnt = false;
     bool public unsoldTokensTransferred = false;
+    bool public investorsWhitelisted = false;
 
     event GoalReached(address recipient, uint totalAmountRaised);
     event FundTransfer(address backer, uint amount, bool isContribution);
+
+    // This is a type for a single Investor
+    struct Inv {
+        bool whitelisted;
+        uint tokenBalance;   
+    }
+
+    mapping(address => Inv) public investors;   
 
     /**
      * Constructor function
@@ -53,15 +61,12 @@ contract Crowdsale {
      */
     function () payable public {
         require(now < deadline);
+        require(investors[msg.sender].whitelisted);                
         uint amount = msg.value;
         uint tokens = amount * tokensPerWei;
-        tokenBalanceOf[msg.sender] += tokens;
+        investors[msg.sender].tokenBalance += tokens;
         amountRaised += amount;
         tokensSold += tokens;
-    }
-
-    modifier afterDeadline() { 
-        if (now >= deadline) _; 
     }
 
     function setTokensForSale() public {
@@ -70,17 +75,20 @@ contract Crowdsale {
         tokensForSale = tokenReward.balanceOf(this);
     }
 
-    /**
-     * Check if goal was reached
-     *
-     * Checks if the goal or time limit has been reached and ends the campaign
-     */
-    function checkGoalReached() afterDeadline public {
-        // if (amountRaised >= fundingGoal){
-        //     fundingGoalReached = true;
-        //     emit GoalReached(beneficiary, amountRaised);
-        // }
-        crowdsaleClosed = true;
+    
+    function setWhitelist(address[] addresses) public {
+        require(msg.sender == owner);        
+        require(!investorsWhitelisted);     // todo: we might think to remove this     
+        investorsWhitelisted = true;  
+        for (uint i = 0; i < addresses.length; i++) {
+            investors[addresses[i]].whitelisted = true;   
+        }
+    }
+
+    // ----------- After Deadline ------------
+
+    modifier afterDeadline() { 
+        if (now >= deadline) _; 
     }
 
     /**
@@ -92,8 +100,9 @@ contract Crowdsale {
      * the amount they contributed.
      */
     function withdrawTokens() afterDeadline public {
-        uint tokens = tokenBalanceOf[msg.sender];
-        tokenBalanceOf[msg.sender] = 0;     // fix for reentrancy bug
+        require(investors[msg.sender].whitelisted);                
+        uint tokens = investors[msg.sender].tokenBalance;
+        investors[msg.sender].tokenBalance = 0;     // fix for reentrancy bug
         if (tokens > 0) {
             tokenReward.transfer(msg.sender, tokens);
             emit FundTransfer(msg.sender, tokens, true);
@@ -136,4 +145,6 @@ contract Crowdsale {
         tokenReward.transfer(toAddress, unsoldTokens);
         emit FundTransfer(toAddress, unsoldTokens, true);        
     }
+
+
 }
