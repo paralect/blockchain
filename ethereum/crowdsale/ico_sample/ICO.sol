@@ -14,6 +14,8 @@ contract Crowdsale {
     uint public amountRaised;
     uint public tokensForSale;
     uint public tokensSold;
+    uint public tokensForReferrals;
+    uint public tokensForReferralsEarned;
     uint public deadline;
     uint public tokensPerWei;
     token public tokenReward;
@@ -29,7 +31,9 @@ contract Crowdsale {
     // This is a type for a single Investor
     struct Inv {
         bool whitelisted;
-        uint tokenBalance;   
+        uint purchasedTokens;           
+        uint referralTokensEarned;           
+        address referredBy;
     }
 
     mapping(address => Inv) public investors;   
@@ -64,17 +68,24 @@ contract Crowdsale {
         require(investors[msg.sender].whitelisted);                
         uint amount = msg.value;
         uint tokens = amount * tokensPerWei;
-        investors[msg.sender].tokenBalance += tokens;
+        investors[msg.sender].purchasedTokens += tokens;        
+        address referredBy = investors[msg.sender].referredBy;
+        if(address(0) != referredBy) {
+            uint refTokens = tokens / 2;
+            investors[referredBy].referralTokensEarned += refTokens;
+            tokensForReferralsEarned += refTokens;
+        }
         amountRaised += amount;
         tokensSold += tokens;
     }
 
     function setTokensForSale() public {
         require(msg.sender == owner);
-        require(0 == tokensForSale);    
-        tokensForSale = tokenReward.balanceOf(this);
+        require(0 == tokensForSale);            
+        uint totalTokens = tokenReward.balanceOf(this);
+        tokensForSale = (totalTokens * 9) / 10;
+        tokensForReferrals = (totalTokens * 1) / 10;
     }
-
     
     function setWhitelist(address[] addresses) public {
         require(msg.sender == owner);        
@@ -83,6 +94,19 @@ contract Crowdsale {
         for (uint i = 0; i < addresses.length; i++) {
             investors[addresses[i]].whitelisted = true;   
         }
+    }
+
+    function setReferral(address investor, address referredBy) public {
+        require(msg.sender == owner);                        
+        investors[investor].referredBy = referredBy;   
+    }
+
+    function setReferrals(address[] _investors, address[] _referredBys) public {
+        require(msg.sender == owner);                        
+        require(_investors.length == _referredBys.length);                        
+        for (uint i = 0; i < _investors.length; i++) {
+            investors[_investors[i]].referredBy = _referredBys[i];   
+        }        
     }
 
     // ----------- After Deadline ------------
@@ -101,8 +125,9 @@ contract Crowdsale {
      */
     function withdrawTokens() afterDeadline public {
         require(investors[msg.sender].whitelisted);                
-        uint tokens = investors[msg.sender].tokenBalance;
-        investors[msg.sender].tokenBalance = 0;     // fix for reentrancy bug
+        uint tokens = investors[msg.sender].purchasedTokens + investors[msg.sender].referralTokensEarned;
+        investors[msg.sender].purchasedTokens = 0;          // fix for reentrancy bug
+        investors[msg.sender].referralTokensEarned = 0;     // fix for reentrancy bug            
         if (tokens > 0) {
             tokenReward.transfer(msg.sender, tokens);
             emit FundTransfer(msg.sender, tokens, true);
