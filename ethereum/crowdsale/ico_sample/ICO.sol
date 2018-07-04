@@ -66,6 +66,7 @@ contract Crowdsale {
     function () payable public {
         require(now < deadline);
         require(investors[msg.sender].whitelisted);                
+        require(msg.value >= 0.001 ether);   
         uint amount = msg.value;
         uint tokens = amount * tokensPerWei;
         investors[msg.sender].purchasedTokens += tokens;        
