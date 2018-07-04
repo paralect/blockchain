@@ -64,27 +64,30 @@ contract Crowdsale {
      */
     function () payable public {
         require(now < deadline);
-        require(investors[msg.sender].whitelisted);                
+        require(investors[msg.sender].whitelisted);             
         require(msg.value >= 0.001 ether);   
         uint amount = msg.value;
-        uint tokens = amount * tokensPerWei;
-        investors[msg.sender].purchasedTokens += tokens;        
+        uint tokensToPurchase = amount * tokensPerWei;
+        require(tokensToPurchase <= tokensForSale - tokensSold);
+        investors[msg.sender].purchasedTokens += tokensToPurchase;        
         address referredBy = investors[msg.sender].referredBy;
         if(address(0) != referredBy) {
-            uint refTokens = tokens / 2;
-            investors[referredBy].referralTokensEarned += refTokens;
-            tokensForReferralsEarned += refTokens;
+            uint refTokens = tokensToPurchase / 10;
+            if(refTokens <= tokensForReferrals - tokensForReferralsEarned) {
+                investors[referredBy].referralTokensEarned += refTokens;
+                tokensForReferralsEarned += refTokens;
+            }
         }
         amountRaised += amount;
-        tokensSold += tokens;
+        tokensSold += tokensToPurchase;
     }
 
     function setTokensForSale() public {
         require(msg.sender == owner);
         require(0 == tokensForSale);            
         uint totalTokens = tokenReward.balanceOf(this);
-        tokensForSale = (totalTokens * 9) / 10;
-        tokensForReferrals = (totalTokens * 1) / 10;
+        tokensForReferrals = (totalTokens * 1) / 100;       // tokensForReferrals:  1%
+        tokensForSale = totalTokens - tokensForReferrals;   // tokensForSale:      99% 
     }
     
     function addToWhitelist(address[] addresses) public {
