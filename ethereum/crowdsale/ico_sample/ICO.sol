@@ -23,7 +23,6 @@ contract Crowdsale {
     bool crowdsaleClosed = false;
     bool public unsoldTokensBurnt = false;
     bool public unsoldTokensTransferred = false;
-    bool public investorsWhitelisted = false;
 
     event GoalReached(address recipient, uint totalAmountRaised);
     event FundTransfer(address backer, uint amount, bool isContribution);
@@ -88,14 +87,19 @@ contract Crowdsale {
         tokensForReferrals = (totalTokens * 1) / 10;
     }
     
-    function setWhitelist(address[] addresses) public {
+    function addToWhitelist(address[] addresses) public {
         require(msg.sender == owner);        
-        require(!investorsWhitelisted);     // todo: we might think to remove this     
-        investorsWhitelisted = true;  
         for (uint i = 0; i < addresses.length; i++) {
             investors[addresses[i]].whitelisted = true;   
         }
     }
+
+    function removeFromWhitelist(address[] addresses) public {
+        require(msg.sender == owner);        
+        for (uint i = 0; i < addresses.length; i++) {
+            investors[addresses[i]].whitelisted = false;   
+        }
+    }    
 
     function setReferral(address investor, address referredBy) public {
         require(msg.sender == owner);                        
