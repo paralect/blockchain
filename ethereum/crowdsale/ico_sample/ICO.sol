@@ -14,8 +14,6 @@ contract Crowdsale {
     uint public amountRaised;
     uint public tokensForSale;
     uint public tokensSold;
-    uint public tokensForReferrals;
-    uint public tokensForReferralsEarned;
     uint public deadline;
     uint public tokensPerWei;
     token public tokenReward;
@@ -31,8 +29,6 @@ contract Crowdsale {
     struct Inv {
         bool whitelisted;
         uint purchasedTokens;           
-        uint referralTokensEarned;           
-        address referredBy;
     }
 
     mapping(address => Inv) public investors;   
@@ -70,31 +66,14 @@ contract Crowdsale {
         uint tokensToPurchase = amount * tokensPerWei;
         require(tokensToPurchase <= tokensForSale - tokensSold);
         investors[msg.sender].purchasedTokens += tokensToPurchase;      
-
-        //// Referral tokens
-        address referredBy = investors[msg.sender].referredBy;        
-        if(address(0) != referredBy && tokensForReferrals > tokensForReferralsEarned) {
-            uint refTokens = tokensToPurchase / 10;
-            if(refTokens <= tokensForReferrals - tokensForReferralsEarned) {
-                investors[referredBy].referralTokensEarned += refTokens;
-                tokensForReferralsEarned += refTokens;
-            }
-            else {  // we do not have enough ref tokens to give, so give as much as we can
-                refTokens = tokensForReferrals - tokensForReferralsEarned;
-                investors[referredBy].referralTokensEarned += refTokens;
-                tokensForReferralsEarned += refTokens;                    
-            }
-        }
-
         amountRaised += amount;
         tokensSold += tokensToPurchase;
     }
 
-    function setTokensForSaleAndReferrals() public {
+    function setTokensForSale() public {
         require(msg.sender == owner);
         uint totalTokens = tokenReward.balanceOf(this);
-        tokensForReferrals = (totalTokens * 1) / 100;       // tokensForReferrals:  1%
-        tokensForSale = totalTokens - tokensForReferrals;   // tokensForSale:      99% 
+        tokensForSale = totalTokens;
     }
     
     function addToWhitelist(address[] addresses) public {
@@ -110,19 +89,6 @@ contract Crowdsale {
             investors[addresses[i]].whitelisted = false;   
         }
     }    
-
-    function setReferral(address investor, address referredBy) public {
-        require(msg.sender == owner);                        
-        investors[investor].referredBy = referredBy;   
-    }
-
-    function setReferrals(address[] _investors, address[] _referredBys) public {
-        require(msg.sender == owner);                        
-        require(_investors.length == _referredBys.length);                        
-        for (uint i = 0; i < _investors.length; i++) {
-            investors[_investors[i]].referredBy = _referredBys[i];   
-        }        
-    }
 
     // ----------- After Deadline ------------
 
@@ -140,9 +106,8 @@ contract Crowdsale {
      */
     function withdrawTokens() afterDeadline public {
         require(investors[msg.sender].whitelisted);                
-        uint tokens = investors[msg.sender].purchasedTokens + investors[msg.sender].referralTokensEarned;
+        uint tokens = investors[msg.sender].purchasedTokens;
         investors[msg.sender].purchasedTokens = 0;          // fix for reentrancy bug
-        investors[msg.sender].referralTokensEarned = 0;     // fix for reentrancy bug            
         if (tokens > 0) {
             tokenReward.transfer(msg.sender, tokens);
             emit FundTransfer(msg.sender, tokens, true);
