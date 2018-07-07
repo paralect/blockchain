@@ -10,15 +10,14 @@ interface token {
 contract Crowdsale {
     address public owner;
     address public beneficiary;
-    uint public fundingGoal;
     uint public amountRaised;
     uint public tokensForSale;
     uint public tokensSold;
-    uint public deadline;
+    uint public icoDeadline;
+    uint public tokensClaimableDeadline;
     uint public tokensPerWei;
     token public tokenReward;
-    bool fundingGoalReached = false;
-    bool crowdsaleClosed = false;
+    bool public crowdsaleClosed = false;
     bool public unsoldTokensBurnt = false;
     bool public unsoldTokensTransferred = false;
 
@@ -41,15 +40,15 @@ contract Crowdsale {
      */
     function Crowdsale(
         address ifSuccessfulSendTo,
-        uint fundingGoalInEthers,
-        uint durationInMinutes,
+        uint durationOfIcoInMinutes,
+        uint durationTokensClaimableAfterInMinutes,
         uint tokensForOneWei,
         address addressOfTokenUsedAsReward
     ) public {
         owner = msg.sender;
         beneficiary = ifSuccessfulSendTo;
-        fundingGoal = fundingGoalInEthers * 1 ether;        // 1 ether == 1,000,000,000,000,000,000
-        deadline = now + durationInMinutes * 1 minutes;
+        icoDeadline = now + durationOfIcoInMinutes * 1 minutes;
+        tokensClaimableDeadline = now + durationTokensClaimableAfterInMinutes * 1 minutes;
         tokensPerWei = tokensForOneWei;      // 1 wei -> 1000 tokens for now (0.001 eth == 1x10^18 tokens)
         tokenReward = token(addressOfTokenUsedAsReward);    // instantiate a contract at a given address
     }
@@ -60,7 +59,7 @@ contract Crowdsale {
      * The function without name is the default function that is called whenever anyone sends funds to a contract
      */
     function () payable public {
-        require(now < deadline);
+        require(now < icoDeadline);
         require(investors[msg.sender].whitelisted);             
         require(msg.value >= 0.001 ether);   
         uint amount = msg.value;
@@ -91,11 +90,51 @@ contract Crowdsale {
         }
     }    
 
-    // ----------- After Deadline ------------
+    modifier afterIcoDeadline() { if (now >= icoDeadline) _; }
 
-    modifier afterDeadline() { 
-        if (now >= deadline) _; 
+    modifier afterTokensClaimableDeadline() { if (now >= tokensClaimableDeadline) _; }
+
+    // ----------- After ICO Deadline ------------
+
+    /**
+     * Withdraw the funds
+     *
+     * Checks to see if goal or time limit has been reached, and if so, and the funding goal was reached,
+     * sends the entire amount to the beneficiary. If goal was not reached, each contributor can withdraw
+     * the amount they contributed.
+     */
+    function withdrawFunds() afterIcoDeadline public {
+        require(beneficiary == msg.sender);
+        beneficiary.transfer(amountRaised);
+        emit FundTransfer(beneficiary, amountRaised, false);        
     }
+
+    function checkIfIcoEnded() afterIcoDeadline public {
+        require(msg.sender == owner);        
+        crowdsaleClosed = true;
+    }
+
+    function burnUnsoldTokens() afterIcoDeadline public {
+        require(msg.sender == owner);
+        require(!unsoldTokensBurnt);
+        unsoldTokensBurnt = true;
+        uint256 unsoldTokens = tokensForSale - tokensSold;
+        require(unsoldTokens > 0);
+        tokenReward.burn(unsoldTokens);
+        // Todo: Handle return of burn function
+    }    
+
+    function transferUnsoldTokens(address toAddress) afterIcoDeadline public {        
+        require(msg.sender == owner);
+        require(!unsoldTokensTransferred);
+        unsoldTokensTransferred = true;                
+        uint256 unsoldTokens = tokensForSale - tokensSold;
+        require(unsoldTokens > 0);        
+        tokenReward.transfer(toAddress, unsoldTokens);
+        emit FundTransfer(toAddress, unsoldTokens, true);        
+    }
+
+    // ----------- After Tokens Claimable Deadline ------------
 
     /**
      * Withdraw all tokens 
@@ -105,50 +144,14 @@ contract Crowdsale {
      * sends the entire amount to the beneficiary. If goal was not reached, each contributor can withdraw
      * the amount they contributed.
      */
-    function withdrawTokens() afterDeadline public {
+    function withdrawTokens() afterTokensClaimableDeadline public {
         require(investors[msg.sender].whitelisted);                
         require(investors[msg.sender].purchasedTokens > 0);   
         require(!investors[msg.sender].tokensClaimed);        
         uint tokens = investors[msg.sender].purchasedTokens;
-        investors[msg.sender].purchasedTokens = 0;          // fix for reentrancy bug
-        investors[msg.sender].tokensClaimed = true;         // fix for reentrancy bug        
-        tokenReward.transfer(msg.sender, tokens);       // todo: handle failed transfer
+        investors[msg.sender].purchasedTokens = 0;
+        investors[msg.sender].tokensClaimed = true;
+        tokenReward.transfer(msg.sender, tokens);     
         emit FundTransfer(msg.sender, tokens, true);
-    }
-
-    /**
-     * Withdraw the funds
-     *
-     * Checks to see if goal or time limit has been reached, and if so, and the funding goal was reached,
-     * sends the entire amount to the beneficiary. If goal was not reached, each contributor can withdraw
-     * the amount they contributed.
-     */
-    function withdrawFunds() afterDeadline public {
-        if (beneficiary == msg.sender) {
-            if (beneficiary.send(amountRaised)) {
-                emit FundTransfer(beneficiary, amountRaised, false);
-            } else {
-                //If we fail to send the funds to beneficiary, unlock funders balance
-                fundingGoalReached = false;
-            }
-        }
-    }
-
-    function burnUnsoldTokens() afterDeadline public {
-        require(msg.sender == owner);
-        require(!unsoldTokensBurnt);
-        unsoldTokensBurnt = true;        
-        uint256 unsoldTokens = tokensForSale - tokensSold;
-        tokenReward.burn(unsoldTokens);
-        // Todo: Handle return of burn function
-    }    
-
-    function transferUnsoldTokens(address toAddress) afterDeadline public {        
-        require(msg.sender == owner);
-        require(!unsoldTokensTransferred);
-        unsoldTokensTransferred = true;                
-        uint256 unsoldTokens = tokensForSale - tokensSold;
-        tokenReward.transfer(toAddress, unsoldTokens);
-        emit FundTransfer(toAddress, unsoldTokens, true);        
     }
 }
