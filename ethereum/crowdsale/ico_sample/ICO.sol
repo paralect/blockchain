@@ -69,22 +69,29 @@ contract Crowdsale {
         uint amount = msg.value;
         uint tokensToPurchase = amount * tokensPerWei;
         require(tokensToPurchase <= tokensForSale - tokensSold);
-        investors[msg.sender].purchasedTokens += tokensToPurchase;        
-        address referredBy = investors[msg.sender].referredBy;
-        if(address(0) != referredBy) {
+        investors[msg.sender].purchasedTokens += tokensToPurchase;      
+
+        //// Referral tokens
+        address referredBy = investors[msg.sender].referredBy;        
+        if(address(0) != referredBy && tokensForReferrals > tokensForReferralsEarned) {
             uint refTokens = tokensToPurchase / 10;
             if(refTokens <= tokensForReferrals - tokensForReferralsEarned) {
                 investors[referredBy].referralTokensEarned += refTokens;
                 tokensForReferralsEarned += refTokens;
             }
+            else {  // we do not have enough ref tokens to give, so give as much as we can
+                refTokens = tokensForReferrals - tokensForReferralsEarned;
+                investors[referredBy].referralTokensEarned += refTokens;
+                tokensForReferralsEarned += refTokens;                    
+            }
         }
+
         amountRaised += amount;
         tokensSold += tokensToPurchase;
     }
 
-    function setTokensForSale() public {
+    function setTokensForSaleAndReferrals() public {
         require(msg.sender == owner);
-        require(0 == tokensForSale);            
         uint totalTokens = tokenReward.balanceOf(this);
         tokensForReferrals = (totalTokens * 1) / 100;       // tokensForReferrals:  1%
         tokensForSale = totalTokens - tokensForReferrals;   // tokensForSale:      99% 
