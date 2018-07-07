@@ -28,7 +28,8 @@ contract Crowdsale {
     // This is a type for a single Investor
     struct Inv {
         bool whitelisted;
-        uint purchasedTokens;           
+        uint purchasedTokens;     
+        bool tokensClaimed;      
     }
 
     mapping(address => Inv) public investors;   
@@ -106,13 +107,13 @@ contract Crowdsale {
      */
     function withdrawTokens() afterDeadline public {
         require(investors[msg.sender].whitelisted);                
+        require(investors[msg.sender].purchasedTokens > 0);   
+        require(!investors[msg.sender].tokensClaimed);        
         uint tokens = investors[msg.sender].purchasedTokens;
         investors[msg.sender].purchasedTokens = 0;          // fix for reentrancy bug
-        if (tokens > 0) {
-            tokenReward.transfer(msg.sender, tokens);
-            emit FundTransfer(msg.sender, tokens, true);
-        }
-        // todo: add else to assign back the tokens if token transfer fails
+        investors[msg.sender].tokensClaimed = true;         // fix for reentrancy bug        
+        tokenReward.transfer(msg.sender, tokens);       // todo: handle failed transfer
+        emit FundTransfer(msg.sender, tokens, true);
     }
 
     /**
@@ -150,6 +151,4 @@ contract Crowdsale {
         tokenReward.transfer(toAddress, unsoldTokens);
         emit FundTransfer(toAddress, unsoldTokens, true);        
     }
-
-
 }
