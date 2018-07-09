@@ -35,15 +35,12 @@ contract TokenERC20 {
     uint8 public decimals = 18;
     uint256 public totalSupply;
 
-    // This creates an array with all balances
     mapping (address => uint256) balances;
     mapping (address => mapping (address => uint256)) allowed;
 
-    // This generates a public event on the blockchain that will notify clients
-    event Transfer(address indexed from, address indexed to, uint256 value);
-
-    // This notifies clients about the amount burnt
-    event Burn(address indexed from, uint256 value);
+    event Transfer(address indexed _from, address indexed _to, uint256 _value);
+    event Approval(address indexed _owner, address indexed _spender, uint256 _value);
+    event Burn(address indexed _from, uint256 _value);
 
     /**
      * Constructor function
@@ -84,23 +81,15 @@ contract TokenERC20 {
      * @param _value the amount to send
      */
     function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
-        uint256 allowance = allowed[_from][msg.sender];
-        require(balances[_from] >= _value && allowance >= _value);
+        require(_to != address(0));
+        require(_value <= balances[_from]);
+        require(_value <= allowed[_from][msg.sender]);        
         balances[_to] = SafeMath.add(balances[_to], _value);
         balances[_from] = SafeMath.sub(balances[_from], _value);
         allowed[_from][msg.sender] = SafeMath.sub(allowed[_from][msg.sender], _value);
         emit Transfer(_from, _to, _value);
         return true;
     }
-
-    /**
-    * @dev Gets the balance of the specified address.
-    * @param _owner The address to query the the balance of.
-    * @return An uint256 representing the amount owned by the passed address.
-    */
-    function balanceOf(address _owner) public view returns (uint256 balance) {
-        return balances[_owner];
-    }   
 
     /**
      * Set allowance for other address
@@ -110,17 +99,8 @@ contract TokenERC20 {
      */
     function approve(address _spender, uint256 _value) public returns (bool success) {
         allowed[msg.sender][_spender] = _value;
+        emit Approval(msg.sender, _spender, _value);
         return true;
-    }
-
-    /**
-    * @dev Function to check the amount of tokens that an owner allowed to a spender.
-    * @param _owner address The address which owns the funds.
-    * @param _spender address The address which will spend the funds.
-    * @return A uint256 specifying the amount of tokens still available for the spender.
-    */
-    function allowance(address _owner, address _spender) public view returns (uint256 remaining) {
-        return allowed[_owner][_spender];
     }
 
     /**
@@ -134,5 +114,26 @@ contract TokenERC20 {
         totalSupply = SafeMath.sub(totalSupply, _value);                     // Updates totalSupply
         emit Burn(msg.sender, _value);
         return true;
+    }
+
+    // ------- View functions -------
+
+    /**
+    * @dev Gets the balance of the specified address.
+    * @param _owner The address to query the the balance of.
+    * @return An uint256 representing the amount owned by the passed address.
+    */
+    function balanceOf(address _owner) public view returns (uint256 balance) {
+        return balances[_owner];
+    }   
+
+    /**
+    * @dev Function to check the amount of tokens that an owner allowed to a spender.
+    * @param _owner address The address which owns the funds.
+    * @param _spender address The address which will spend the funds.
+    * @return A uint256 specifying the amount of tokens still available for the spender.
+    */
+    function allowance(address _owner, address _spender) public view returns (uint256 remaining) {
+        return allowed[_owner][_spender];
     }
 }
