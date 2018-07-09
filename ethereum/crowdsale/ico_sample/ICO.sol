@@ -52,7 +52,7 @@ library SafeMath {
 
 interface token {
     function transfer(address _to, uint256 _value) external returns (bool success);
-    function burn(uint256 amount) external;
+    function burn(uint256 _amount) external;
     function balanceOf(address _owner) external returns (uint256 balance);
 }
 
@@ -66,10 +66,7 @@ contract Crowdsale {
     uint256 public tokensClaimableDeadline;
     uint256 public tokensPerWei;
     token public tokenReward;
-    bool public unsoldTokensBurnt = false;
-    bool public unsoldTokensTransferred = false;
 
-    event GoalReached(address recipient, uint totalAmountRaised);
     event FundTransfer(address backer, uint amount, bool isContribution);
 
     // This is a type for a single Investor
@@ -87,14 +84,14 @@ contract Crowdsale {
      * Setup the owner
      */
     function Crowdsale(
-        address ifSuccessfulSendTo,
+        address fundRaiser,
         uint256 durationOfIcoInMinutes,
         uint256 durationTokensClaimableAfterInMinutes,
         uint256 tokensForOneWei,
         address addressOfTokenUsedAsReward
     ) public {
         owner = msg.sender;
-        beneficiary = ifSuccessfulSendTo;
+        beneficiary = fundRaiser;
         icoDeadline = now + durationOfIcoInMinutes * 1 minutes;
         tokensClaimableDeadline = now + durationTokensClaimableAfterInMinutes * 1 minutes;
         tokensPerWei = tokensForOneWei;      // 1 wei -> 1000 tokens for now (0.001 eth == 1x10^18 tokens)
@@ -158,29 +155,22 @@ contract Crowdsale {
 
     function burnUnsoldTokens() afterIcoDeadline public {
         require(msg.sender == owner);
-        require(!unsoldTokensBurnt);
-        unsoldTokensBurnt = true;
         uint256 unsoldTokens = SafeMath.sub(tokensForSale, tokensSold);
         require(unsoldTokens > 0);
         tokenReward.burn(unsoldTokens);
-        // Todo: Handle return of burn function
     }    
 
     function transferUnsoldTokens(address toAddress) afterIcoDeadline public {        
-        require(msg.sender == owner);
-        require(!unsoldTokensTransferred);
-        unsoldTokensTransferred = true;                
+        require(msg.sender == owner);        
         uint256 unsoldTokens = SafeMath.sub(tokensForSale, tokensSold);
         require(unsoldTokens > 0);        
         tokenReward.transfer(toAddress, unsoldTokens);
-        emit FundTransfer(toAddress, unsoldTokens, true);        
     }
 
     // ----------- After Tokens Claimable Deadline ------------
 
     /**
      * Withdraw all tokens 
-     *  - todo: support withdraw(some tokens)
      *
      * Checks to see if goal or time limit has been reached, and if so, and the funding goal was reached,
      * sends the entire amount to the beneficiary. If goal was not reached, each contributor can withdraw
@@ -188,12 +178,9 @@ contract Crowdsale {
      */
     function withdrawTokens() afterTokensClaimableDeadline public {
         require(investors[msg.sender].whitelisted);                
-        require(investors[msg.sender].purchasedTokens > 0);   
         require(!investors[msg.sender].tokensClaimed);        
-        uint256 tokens = investors[msg.sender].purchasedTokens;
-        investors[msg.sender].purchasedTokens = 0;
         investors[msg.sender].tokensClaimed = true;
+        uint256 tokens = investors[msg.sender].purchasedTokens;
         tokenReward.transfer(msg.sender, tokens);     
-        emit FundTransfer(msg.sender, tokens, true);
     }
 }
