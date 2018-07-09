@@ -51,9 +51,9 @@ library SafeMath {
 }
 
 interface token {
-    function transfer(address receiver, uint amount) external;
+    function transfer(address _to, uint256 _value) external returns (bool success);
     function burn(uint256 amount) external;
-    function balanceOf(address addr) external returns (uint256 amount);
+    function balanceOf(address _owner) external returns (uint256 balance);
 }
 
 contract Crowdsale {
