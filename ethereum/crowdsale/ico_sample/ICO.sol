@@ -1,7 +1,7 @@
 pragma solidity 0.4.21;
 
 /**
-* @title SafeMath by OpenZeppelin
+* @title SafeMath by OpenZeppelin (commit: 5daaf60)
 * @dev Math operations with safety checks that throw on error
 */
 library SafeMath {
@@ -49,28 +49,29 @@ library SafeMath {
 }
 
 interface Token {
-    function transfer(address _to, uint256 _value) external returns (bool success);
-    function burn(uint256 _amount) external;
-    function balanceOf(address _owner) external returns (uint256 balance);
+    function transfer(address to, uint256 value) external returns (bool success);
+    function burn(uint256 amount) external;
+    function balanceOf(address owner) external returns (uint256 balance);
 }
 
 contract Crowdsale {
-    address public owner;
-    address public beneficiary;
-    uint256 public amountRaised;
-    uint256 public tokensForSale;
-    uint256 public tokensSold;
-    uint256 public icoDeadline;
-    uint256 public tokensClaimableAfter;
-    uint256 public tokensPerWei;
-    Token public tokenReward;
-    mapping(address => Inv) public investors;   
+    address public owner;                       // Address of the ICO owner
+    address public beneficiary;                 // Address where funds are collected
+    uint256 public amountRaised;                // Amount of ether raised in wei
+    uint256 public tokensForSale;               // Number of tokens for sale
+    uint256 public tokensSold;                  // Number of tokens sold
+    uint256 public icoDeadline;                 // Duration this ICO will end
+    uint256 public tokensClaimableAfter;        // Duration afer tokens will be claimable
+    uint256 public tokensPerWei;                // How many token units a buyer gets per wei 
+    Token public tokenReward;                   // Token contract being distributed 
+    // Map of crowdsale participants, address as key and Participant structure as value
+    mapping(address => Participant) public participants;    
 
-    // This is a type for a single Investor
-    struct Inv {
+    // This is a type for a single Participant
+    struct Participant {
         bool whitelisted;
-        uint256 purchasedTokens;     
-        bool tokensClaimed;      
+        uint256 purchasedTokens;
+        bool tokensClaimed;
     }
 
     event FundTransfer(address backer, uint amount, bool isContribution);
@@ -80,8 +81,6 @@ contract Crowdsale {
 
     /**
      * Constructor function
-     *
-     * Setup the owner
      */
     function Crowdsale(
         address fundRaiser,
@@ -97,7 +96,7 @@ contract Crowdsale {
         icoDeadline = now + durationOfIcoInMinutes * 1 minutes;
         tokensClaimableAfter = now + durationTokensClaimableAfterInMinutes * 1 minutes;
         tokensPerWei = tokensForOneWei;
-        tokenReward = Token(addressOfTokenUsedAsReward);    // instantiate a contract at a given address
+        tokenReward = Token(addressOfTokenUsedAsReward);
     }
 
     /**
@@ -107,44 +106,37 @@ contract Crowdsale {
      */
     function() payable public {
         require(now < icoDeadline);
-        require(investors[msg.sender].whitelisted);             
+        require(participants[msg.sender].whitelisted);             
         require(msg.value >= 0.001 ether);   
         uint256 amount = msg.value;
         uint256 tokensToPurchase = SafeMath.mul(amount, tokensPerWei);
         require(tokensToPurchase <= SafeMath.sub(tokensForSale, tokensSold));
-        investors[msg.sender].purchasedTokens = SafeMath.add(investors[msg.sender].purchasedTokens, tokensToPurchase);      
+        participants[msg.sender].purchasedTokens = SafeMath.add(participants[msg.sender].purchasedTokens, tokensToPurchase);      
         amountRaised = SafeMath.add(amountRaised, amount);
         tokensSold = SafeMath.add(tokensSold, tokensToPurchase);
     }
 
     function setTokensForSale() public {
         require(msg.sender == owner);
-        tokensForSale = tokenReward.balanceOf(this);    // tokens owned by this contract
+        tokensForSale = tokenReward.balanceOf(this);
     }
     
     function addToWhitelist(address[] addresses) public {
         require(msg.sender == owner);        
         for (uint i = 0; i < addresses.length; i++) {
-            investors[addresses[i]].whitelisted = true;   
+            participants[addresses[i]].whitelisted = true;   
         }
     }
 
     function removeFromWhitelist(address[] addresses) public {
         require(msg.sender == owner);        
         for (uint i = 0; i < addresses.length; i++) {
-            investors[addresses[i]].whitelisted = false;   
+            participants[addresses[i]].whitelisted = false;   
         }
-    }    
+    }
 
     // ----------- After ICO Deadline ------------
 
-    /**
-     * Withdraw the funds
-     *
-     * Checks to see if goal or time limit has been reached, and if so, and the funding goal was reached,
-     * sends the entire amount to the beneficiary. If goal was not reached, each contributor can withdraw
-     * the amount they contributed.
-     */
     function withdrawFunds() afterIcoDeadline public {
         require(beneficiary == msg.sender);
         beneficiary.transfer(address(this).balance);
@@ -165,20 +157,13 @@ contract Crowdsale {
         tokenReward.transfer(toAddress, unsoldTokens);
     }
 
-    // ----------- After Tokens Claimable Deadline ------------
+    // ----------- After Tokens Claimable Duration ------------
 
-    /**
-     * Withdraw all tokens 
-     *
-     * Checks to see if goal or time limit has been reached, and if so, and the funding goal was reached,
-     * sends the entire amount to the beneficiary. If goal was not reached, each contributor can withdraw
-     * the amount they contributed.
-     */
     function withdrawTokens() afterTokensClaimableDeadline public {
-        require(investors[msg.sender].whitelisted);                
-        require(!investors[msg.sender].tokensClaimed);        
-        investors[msg.sender].tokensClaimed = true;
-        uint256 tokens = investors[msg.sender].purchasedTokens;
+        require(participants[msg.sender].whitelisted);                
+        require(!participants[msg.sender].tokensClaimed);        
+        participants[msg.sender].tokensClaimed = true;
+        uint256 tokens = participants[msg.sender].purchasedTokens;
         tokenReward.transfer(msg.sender, tokens);     
     }
 }

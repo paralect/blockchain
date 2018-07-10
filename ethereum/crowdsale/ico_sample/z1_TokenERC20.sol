@@ -1,7 +1,7 @@
 pragma solidity 0.4.21;
 
 /**
-* @title SafeMath by OpenZeppelin
+* @title SafeMath by OpenZeppelin (commit: 5daaf60)
 * @dev Math operations with safety checks that throw on error
 */
 library SafeMath {
@@ -23,12 +23,7 @@ library SafeMath {
     }
 }
 
-interface tokenRecipient { 
-    function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData) external; 
-}
-
 contract TokenERC20 {
-    // Public variables of the token
     string public name;
     string public symbol;
     uint256 public totalSupply;
@@ -50,7 +45,9 @@ contract TokenERC20 {
         uint256 initialSupply,
         string tokenName,
         string tokenSymbol
-    ) public {
+    ) 
+    public 
+    {
         totalSupply = initialSupply * 10 ** uint256(DECIMALS);  // Update total supply with the decimal amount
         balances[msg.sender] = totalSupply;                     // Give the creator all initial tokens
         name = tokenName;                                       // Set the name for display purposes
