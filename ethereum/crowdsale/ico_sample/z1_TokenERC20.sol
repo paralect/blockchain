@@ -98,6 +98,10 @@ contract TokenERC20 {
      * @param _value the max amount they can spend
      */
     function approve(address _spender, uint256 _value) public returns (bool success) {
+        // To prevent attack vectors problem discussed in the following comment
+        // https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729
+        require((_value == 0) || (allowed[msg.sender][_spender] == 0));
+        
         allowed[msg.sender][_spender] = _value;
         emit Approval(msg.sender, _spender, _value);
         return true;

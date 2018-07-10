@@ -5,7 +5,6 @@ pragma solidity 0.4.21;
 * @dev Math operations with safety checks that throw on error
 */
 library SafeMath {
-
     /**
     * @dev Multiplies two numbers, throws on overflow.
     */
@@ -63,7 +62,7 @@ contract Crowdsale {
     uint256 public tokensForSale;
     uint256 public tokensSold;
     uint256 public icoDeadline;
-    uint256 public tokensClaimableDeadline;
+    uint256 public tokensClaimableAfter;
     uint256 public tokensPerWei;
     token public tokenReward;
 
@@ -93,7 +92,7 @@ contract Crowdsale {
         owner = msg.sender;
         beneficiary = fundRaiser;
         icoDeadline = now + durationOfIcoInMinutes * 1 minutes;
-        tokensClaimableDeadline = now + durationTokensClaimableAfterInMinutes * 1 minutes;
+        tokensClaimableAfter = now + durationTokensClaimableAfterInMinutes * 1 minutes;
         tokensPerWei = tokensForOneWei;      // 1 wei -> 1000 tokens for now (0.001 eth == 1x10^18 tokens)
         tokenReward = token(addressOfTokenUsedAsReward);    // instantiate a contract at a given address
     }
@@ -136,7 +135,7 @@ contract Crowdsale {
 
     modifier afterIcoDeadline() { if (now >= icoDeadline) _; }
 
-    modifier afterTokensClaimableDeadline() { if (now >= tokensClaimableDeadline) _; }
+    modifier afterTokensClaimableDeadline() { if (now >= tokensClaimableAfter) _; }
 
     // ----------- After ICO Deadline ------------
 
@@ -149,8 +148,8 @@ contract Crowdsale {
      */
     function withdrawFunds() afterIcoDeadline public {
         require(beneficiary == msg.sender);
-        beneficiary.transfer(amountRaised);
-        emit FundTransfer(beneficiary, amountRaised, false);        
+        beneficiary.transfer(address(this).balance);
+        emit FundTransfer(beneficiary, address(this).balance, false);        
     }
 
     function burnUnsoldTokens() afterIcoDeadline public {
