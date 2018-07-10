@@ -12,9 +12,8 @@ library SafeMath {
         // Gas optimization: this is cheaper than asserting 'a' not being zero, but the
         // benefit is lost if 'b' is also tested.
         // See: https://github.com/OpenZeppelin/openzeppelin-solidity/pull/522
-        if (a == 0) {
+        if (a == 0) 
             return 0;
-        }
 
         c = a * b;
         assert(c / a == b);
@@ -49,7 +48,7 @@ library SafeMath {
     }
 }
 
-interface token {
+interface Token {
     function transfer(address _to, uint256 _value) external returns (bool success);
     function burn(uint256 _amount) external;
     function balanceOf(address _owner) external returns (uint256 balance);
@@ -64,9 +63,8 @@ contract Crowdsale {
     uint256 public icoDeadline;
     uint256 public tokensClaimableAfter;
     uint256 public tokensPerWei;
-    token public tokenReward;
-
-    event FundTransfer(address backer, uint amount, bool isContribution);
+    Token public tokenReward;
+    mapping(address => Inv) public investors;   
 
     // This is a type for a single Investor
     struct Inv {
@@ -75,7 +73,10 @@ contract Crowdsale {
         bool tokensClaimed;      
     }
 
-    mapping(address => Inv) public investors;   
+    event FundTransfer(address backer, uint amount, bool isContribution);
+
+    modifier afterIcoDeadline() { if (now >= icoDeadline) _; }
+    modifier afterTokensClaimableDeadline() { if (now >= tokensClaimableAfter) _; }
 
     /**
      * Constructor function
@@ -88,13 +89,15 @@ contract Crowdsale {
         uint256 durationTokensClaimableAfterInMinutes,
         uint256 tokensForOneWei,
         address addressOfTokenUsedAsReward
-    ) public {
+    ) 
+        public 
+    {
         owner = msg.sender;
         beneficiary = fundRaiser;
         icoDeadline = now + durationOfIcoInMinutes * 1 minutes;
         tokensClaimableAfter = now + durationTokensClaimableAfterInMinutes * 1 minutes;
-        tokensPerWei = tokensForOneWei;      // 1 wei -> 1000 tokens for now (0.001 eth == 1x10^18 tokens)
-        tokenReward = token(addressOfTokenUsedAsReward);    // instantiate a contract at a given address
+        tokensPerWei = tokensForOneWei;
+        tokenReward = Token(addressOfTokenUsedAsReward);    // instantiate a contract at a given address
     }
 
     /**
@@ -102,7 +105,7 @@ contract Crowdsale {
      *
      * The function without name is the default function that is called whenever anyone sends funds to a contract
      */
-    function () payable public {
+    function() payable public {
         require(now < icoDeadline);
         require(investors[msg.sender].whitelisted);             
         require(msg.value >= 0.001 ether);   
@@ -132,10 +135,6 @@ contract Crowdsale {
             investors[addresses[i]].whitelisted = false;   
         }
     }    
-
-    modifier afterIcoDeadline() { if (now >= icoDeadline) _; }
-
-    modifier afterTokensClaimableDeadline() { if (now >= tokensClaimableAfter) _; }
 
     // ----------- After ICO Deadline ------------
 

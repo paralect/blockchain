@@ -5,7 +5,6 @@ pragma solidity 0.4.21;
 * @dev Math operations with safety checks that throw on error
 */
 library SafeMath {
-
     /**
     * @dev Subtracts two numbers, throws on overflow (i.e. if subtrahend is greater than minuend).
     */
@@ -32,8 +31,8 @@ contract TokenERC20 {
     // Public variables of the token
     string public name;
     string public symbol;
-    uint8 public decimals = 18;
     uint256 public totalSupply;
+    uint8 constant public DECIMALS = 18;
 
     mapping (address => uint256) balances;
     mapping (address => mapping (address => uint256)) allowed;
@@ -52,10 +51,10 @@ contract TokenERC20 {
         string tokenName,
         string tokenSymbol
     ) public {
-        totalSupply = initialSupply * 10 ** uint256(decimals);  // Update total supply with the decimal amount
-        balances[msg.sender] = totalSupply;                 // Give the creator all initial tokens
-        name = tokenName;                                   // Set the name for display purposes
-        symbol = tokenSymbol;                               // Set the symbol for display purposes
+        totalSupply = initialSupply * 10 ** uint256(DECIMALS);  // Update total supply with the decimal amount
+        balances[msg.sender] = totalSupply;                     // Give the creator all initial tokens
+        name = tokenName;                                       // Set the name for display purposes
+        symbol = tokenSymbol;                                   // Set the symbol for display purposes
     }
 
     /**
