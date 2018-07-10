@@ -27,7 +27,7 @@ contract TokenERC20 {
     string public name;
     string public symbol;
     uint256 public totalSupply;
-    uint8 constant public DECIMALS = 18;
+    uint8 public decimals = 18;
 
     mapping (address => uint256) balances;
     mapping (address => mapping (address => uint256)) allowed;
@@ -48,7 +48,7 @@ contract TokenERC20 {
     ) 
     public 
     {
-        totalSupply = initialSupply * 10 ** uint256(DECIMALS);  // Update total supply with the decimal amount
+        totalSupply = initialSupply * 10 ** uint256(decimals);  // Update total supply with the decimal amount
         balances[msg.sender] = totalSupply;                     // Give the creator all initial tokens
         name = tokenName;                                       // Set the name for display purposes
         symbol = tokenSymbol;                                   // Set the symbol for display purposes
