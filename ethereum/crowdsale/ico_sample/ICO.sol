@@ -21,16 +21,6 @@ library SafeMath {
     }
 
     /**
-    * @dev Integer division of two numbers, truncating the quotient.
-    */
-    function div(uint256 a, uint256 b) internal pure returns (uint256) {
-        // assert(b > 0); // Solidity automatically throws when dividing by 0
-        // uint256 c = a / b;
-        // assert(a == b * c + a % b); // There is no case in which this doesn't hold
-        return a / b;
-    }
-
-    /**
     * @dev Subtracts two numbers, throws on overflow (i.e. if subtrahend is greater than minuend).
     */
     function sub(uint256 a, uint256 b) internal pure returns (uint256) {
@@ -64,6 +54,7 @@ contract Crowdsale {
     uint256 public tokensClaimableAfter;        // Duration afer tokens will be claimable
     uint256 public tokensPerWei;                // How many token units a buyer gets per wei 
     Token public tokenReward;                   // Token contract being distributed 
+
     // Map of crowdsale participants, address as key and Participant structure as value
     mapping(address => Participant) public participants;    
 
