@@ -45,13 +45,13 @@ interface Token {
 }
 
 contract Crowdsale {
-    address public owner;                       // Address of the ICO owner
+    address public owner;                       // Address of the contract owner
     address public fundRaiser;                  // Address which can withraw funds raised
     uint256 public amountRaised;                // Total amount of ether raised in wei
     uint256 public tokensSold;                  // Total number of tokens sold
     uint256 public tokensClaimed;               // Total Number of tokens claimed by participants
     uint256 public icoDeadline;                 // Duration this ICO will end
-    uint256 public tokensClaimableAfter;        // Duration afer tokens will be claimable
+    uint256 public tokensClaimableAfter;        // Duration after tokens will be claimable
     uint256 public tokensPerWei;                // How many token units a buyer gets per wei 
     Token public tokenReward;                   // Token contract being distributed 
 
@@ -94,7 +94,7 @@ contract Crowdsale {
     /**
      * Fallback function: Buy token
      * The function without name is the default function that is called whenever anyone sends funds to a contract.
-     * Reserves a number tokens per participant by muliplying tokensPerWei and sent ether in wei.
+     * Reserves a number tokens per participant by multiplying tokensPerWei and sent ether in wei.
      * This function is able to buy token in four cases:
      *      - Before deadline
      *      - Payer is whitelisted
@@ -113,24 +113,24 @@ contract Crowdsale {
     }
     
     /**
-    * Add single address into whitelist. 
-    * Note: Use this function for single address save transaction fee
+    * Add single address into the whitelist. 
+    * Note: Use this function for a single address save transaction fee
     */ 
     function addToWhitelist(address addr) onlyOwner public {
         participants[addr].whitelisted = true;   
     }
 
     /**
-    * Remove single address into whitelist. 
-    * Note: Use this function for single address save transaction fee
+    * Remove single address into the whitelist. 
+    * Note: Use this function for a single address save transaction fee
     */ 
     function removeFromWhitelist(address addr) onlyOwner public {
         participants[addr].whitelisted = false;   
     }
 
     /**
-    * Remove single address into whitelist. 
-    * Note-1: Use addToWhitelist for single address to save transaction fee
+    * Remove single address into the whitelist. 
+    * Note-1: Use addToWhitelist for a single address to save transaction fee
     * Note-2: Use this function for more than one address to save transaction fee
     */ 
     function addAddressesToWhitelist(address[] addresses) onlyOwner public {
@@ -140,8 +140,8 @@ contract Crowdsale {
     }
 
     /**
-    * Add single address into whitelist
-    * Note-1: Use addToWhitelist for single address to save transaction fee
+    * Add single address into the whitelist
+    * Note-1: Use addToWhitelist for a single address to save transaction fee
     * Note-2: Use this function for more than one address to save transaction fee
     */ 
     function removeAddressesFromWhitelist(address[] addresses) onlyOwner public {
@@ -153,7 +153,7 @@ contract Crowdsale {
     // ----------- After ICO Deadline ------------
 
     /**
-    * Fundraiser address claims the raised funds afre ico deadline
+    * Fundraiser address claims the raised funds after ICO deadline
     */ 
     function withdrawFunds() afterIcoDeadline public {
         require(fundRaiser == msg.sender);
@@ -162,7 +162,7 @@ contract Crowdsale {
     }
 
     /**
-    * Burn unsold tokens after ico deadline
+    * Burn unsold tokens after ICO deadline
     * This function is designed to be used after Final-ICO ends to burn unsold tokens
     */ 
     function burnUnsoldTokens()  onlyOwner afterIcoDeadline public {  

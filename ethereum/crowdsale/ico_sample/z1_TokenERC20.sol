@@ -39,7 +39,7 @@ contract TokenERC20 {
     /**
      * Constructor function
      *
-     * Initializes contract with initial supply tokens to the creator of the contract
+     * Initializes contract with initial supply tokens assigned to the creator of the contract
      */
     function TokenERC20(
         uint256 initialSupply,
