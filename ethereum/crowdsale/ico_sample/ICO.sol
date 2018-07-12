@@ -46,7 +46,7 @@ interface Token {
 
 contract Crowdsale {
     address public owner;                       // Address of the ICO owner
-    address public beneficiary;                 // Address where funds are collected
+    address public fundRaiser;                  // Address which can withraw funds raised
     uint256 public amountRaised;                // Total amount of ether raised in wei
     uint256 public tokensSold;                  // Total number of tokens sold
     uint256 public tokensClaimed;               // Total Number of tokens claimed by participants
@@ -75,20 +75,20 @@ contract Crowdsale {
      * Constructor function
      */
     function Crowdsale(
-        address fundRaiser,
-        uint256 durationOfIcoInMinutes,
-        uint256 durationTokensClaimableAfterInMinutes,
+        address fundRaiserAccount,
+        uint256 durationOfIcoInDays,
+        uint256 durationTokensClaimableAfterInDays,
         uint256 tokensForOneWei,
-        address addressOfTokenUsedAsReward
+        address addressOfToken
     ) 
         public 
     {
         owner = msg.sender;
-        beneficiary = fundRaiser;
-        icoDeadline = now + durationOfIcoInMinutes * 1 minutes;
-        tokensClaimableAfter = now + durationTokensClaimableAfterInMinutes * 1 minutes;
+        fundRaiser = fundRaiserAccount;
+        icoDeadline = now + durationOfIcoInDays * 1 days;
+        tokensClaimableAfter = now + durationTokensClaimableAfterInDays * 1 days;
         tokensPerWei = tokensForOneWei;
-        tokenReward = Token(addressOfTokenUsedAsReward);
+        tokenReward = Token(addressOfToken);
     }
 
     /**
@@ -107,13 +107,21 @@ contract Crowdsale {
         tokensSold = SafeMath.add(tokensSold, tokensToBuy);
     }
     
-    function addToWhitelist(address[] addresses) onlyOwner public {
+    function addToWhitelist(address _address) onlyOwner public {
+        participants[_address].whitelisted = true;   
+    }
+
+    function removeFromWhitelist(address _address) onlyOwner public {
+        participants[_address].whitelisted = false;   
+    }
+
+    function addAddressesToWhitelist(address[] addresses) onlyOwner public {
         for (uint i = 0; i < addresses.length; i++) {
             participants[addresses[i]].whitelisted = true;   
         }
     }
 
-    function removeFromWhitelist(address[] addresses) onlyOwner public {
+    function removeAddressesFromWhitelist(address[] addresses) onlyOwner public {
         for (uint i = 0; i < addresses.length; i++) {
             participants[addresses[i]].whitelisted = false;   
         }
@@ -122,9 +130,9 @@ contract Crowdsale {
     // ----------- After ICO Deadline ------------
 
     function withdrawFunds() afterIcoDeadline public {
-        require(beneficiary == msg.sender);
-        beneficiary.transfer(address(this).balance);
-        emit FundTransfer(beneficiary, address(this).balance);        
+        require(fundRaiser == msg.sender);
+        fundRaiser.transfer(address(this).balance);
+        emit FundTransfer(fundRaiser, address(this).balance);        
     }
 
     function burnUnsoldTokens()  onlyOwner afterIcoDeadline public {  
