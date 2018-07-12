@@ -92,9 +92,14 @@ contract Crowdsale {
     }
 
     /**
-     * Fallback function: Buys token
-     *
-     * The function without name is the default function that is called whenever anyone sends funds to a contract
+     * Fallback function: Buy token
+     * The function without name is the default function that is called whenever anyone sends funds to a contract.
+     * Reserves a number tokens per participant by muliplying tokensPerWei and sent ether in wei.
+     * This function is able to buy token in four cases:
+     *      - Before deadline
+     *      - Payer is whitelisted
+     *      - Sent ether is equal or bigger than minimum transaction (0.01 ether) 
+     *      - There are enough tokens to sell in contract (Tokens in contract minus tokensSold)
      */
     function() payable public {
         require(now < icoDeadline);
@@ -107,20 +112,38 @@ contract Crowdsale {
         tokensSold = SafeMath.add(tokensSold, tokensToBuy);
     }
     
-    function addToWhitelist(address _address) onlyOwner public {
-        participants[_address].whitelisted = true;   
+    /**
+    * Add single address into whitelist. 
+    * Note: Use this function for single address save transaction fee
+    */ 
+    function addToWhitelist(address addr) onlyOwner public {
+        participants[addr].whitelisted = true;   
     }
 
-    function removeFromWhitelist(address _address) onlyOwner public {
-        participants[_address].whitelisted = false;   
+    /**
+    * Remove single address into whitelist. 
+    * Note: Use this function for single address save transaction fee
+    */ 
+    function removeFromWhitelist(address addr) onlyOwner public {
+        participants[addr].whitelisted = false;   
     }
 
+    /**
+    * Remove single address into whitelist. 
+    * Note-1: Use addToWhitelist for single address to save transaction fee
+    * Note-2: Use this function for more than one address to save transaction fee
+    */ 
     function addAddressesToWhitelist(address[] addresses) onlyOwner public {
         for (uint i = 0; i < addresses.length; i++) {
             participants[addresses[i]].whitelisted = true;   
         }
     }
 
+    /**
+    * Add single address into whitelist
+    * Note-1: Use addToWhitelist for single address to save transaction fee
+    * Note-2: Use this function for more than one address to save transaction fee
+    */ 
     function removeAddressesFromWhitelist(address[] addresses) onlyOwner public {
         for (uint i = 0; i < addresses.length; i++) {
             participants[addresses[i]].whitelisted = false;   
@@ -129,18 +152,29 @@ contract Crowdsale {
 
     // ----------- After ICO Deadline ------------
 
+    /**
+    * Fundraiser address claims the raised funds afre ico deadline
+    */ 
     function withdrawFunds() afterIcoDeadline public {
         require(fundRaiser == msg.sender);
         fundRaiser.transfer(address(this).balance);
         emit FundTransfer(fundRaiser, address(this).balance);        
     }
 
+    /**
+    * Burn unsold tokens after ico deadline
+    * This function is designed to be used after Final-ICO ends to burn unsold tokens
+    */ 
     function burnUnsoldTokens()  onlyOwner afterIcoDeadline public {  
         uint256 tokensUnclaimed = SafeMath.sub(tokensSold, tokensClaimed);
         uint256 unsoldTokens = SafeMath.sub(tokenReward.balanceOf(this), tokensUnclaimed);
         tokenReward.burn(unsoldTokens);
     }    
 
+    /**
+    * Transfer unsold tokens after ico deadline
+    * This function is designed to be used after Pre-ICO ends to transfer unsold tokens into Final-ICO contract.
+    */ 
     function transferUnsoldTokens(address toAddress) onlyOwner afterIcoDeadline public {
         uint256 tokensUnclaimed = SafeMath.sub(tokensSold, tokensClaimed);
         uint256 unsoldTokens = SafeMath.sub(tokenReward.balanceOf(this), tokensUnclaimed);
@@ -149,6 +183,9 @@ contract Crowdsale {
 
     // ----------- After Tokens Claimable Duration ------------
 
+    /**
+    * Each participant will be able to claim his tokens after duration tokensClaimableAfter
+    */ 
     function withdrawTokens() afterTokensClaimableDeadline public {
         require(participants[msg.sender].whitelisted);                
         require(!participants[msg.sender].tokensClaimed);        
