@@ -160,16 +160,6 @@ contract Crowdsale {
     }
 
     /**
-    * Burn unsold tokens after ICO deadline
-    * Note: This function is designed to be used after Final-ICO period to burn unsold tokens
-    */
-    function burnUnsoldTokens()  onlyOwner afterIcoDeadline public {  
-        uint256 tokensUnclaimed = SafeMath.sub(tokensSold, tokensClaimed);
-        uint256 unsoldTokens = SafeMath.sub(tokenReward.balanceOf(this), tokensUnclaimed);
-        tokenReward.burn(unsoldTokens);
-    }    
-
-    /**
     * Transfer unsold tokens after ICO deadline
     * Note: This function is designed to transfer unsold Pre-ICO tokens into Final-ICO contract.
     */ 
