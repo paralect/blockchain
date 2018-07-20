@@ -98,13 +98,13 @@ contract Crowdsale {
      * This function is able to buy token in four cases:
      *      - Before ICO deadline
      *      - Payer is whitelisted
-     *      - Sent ether is equal or bigger than minimum transaction (0.01 ether) 
+     *      - Sent ether is equal or bigger than minimum transaction (0.05 ether) 
      *      - There are enough tokens to sell in contract (tokens balance of contract minus tokensSold)
      */
     function() payable public {
         require(now < icoDeadline);
         require(participants[msg.sender].whitelisted);             
-        require(msg.value >= 0.01 ether); 
+        require(msg.value >= 0.05 ether); 
         uint256 tokensToBuy = SafeMath.mul(msg.value, tokensPerWei);
         require(tokensToBuy <= SafeMath.sub(tokenReward.balanceOf(this), tokensSold));
         participants[msg.sender].tokens = SafeMath.add(participants[msg.sender].tokens, tokensToBuy);      
