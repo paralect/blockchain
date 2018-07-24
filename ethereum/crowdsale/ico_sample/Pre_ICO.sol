@@ -95,11 +95,11 @@ contract Crowdsale {
      * Fallback function: Buy token
      * The function without name is the default function that is called whenever anyone sends funds to a contract.
      * Reserves a number tokens per participant by multiplying tokensPerWei and sent ether in wei.
-     * This function is able to buy token in four cases:
+     * This function is able to buy token when the following four cases are all met:
      *      - Before ICO deadline
-     *      - Payer is whitelisted
+     *      - Payer address is whitelisted in this contract
      *      - Sent ether is equal or bigger than minimum transaction (0.05 ether) 
-     *      - There are enough tokens to sell in contract (tokens balance of contract minus tokensSold)
+     *      - There are enough tokens to sell in this contract (tokens balance of contract minus tokensSold)
      */
     function() payable public {
         require(now < icoDeadline);
