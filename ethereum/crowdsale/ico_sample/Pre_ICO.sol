@@ -44,6 +44,10 @@ interface Token {
     function balanceOf(address owner) external returns (uint256 balance);
 }
 
+interface EthToUsd {
+    function ethToUsd() external returns (uint256 ethPriceInUsd);
+}
+
 contract Crowdsale {
     address public owner;                       // Address of the contract owner
     address public fundRaiser;                  // Address which can withraw funds raised
@@ -53,7 +57,9 @@ contract Crowdsale {
     uint256 public icoDeadline;                 // Duration this ICO will end
     uint256 public tokensClaimableAfter;        // Duration after tokens will be claimable
     uint256 public tokensPerWei;                // How many token a buyer gets per wei 
-    Token public tokenReward;                   // Token being distributed 
+    uint256 public ethPrice;                    // ETH to USD price from Gdax or Coinbase using oraclize
+    Token public tokenReward;                   // Token contract
+    EthToUsd public ethToUsdContract;           // Oraclize service contract to get Eth to Usd rate
 
     // Map of crowdsale participants, address as key and Participant structure as value
     mapping(address => Participant) public participants;    
@@ -78,8 +84,8 @@ contract Crowdsale {
         address fundRaiserAccount,
         uint256 durationOfIcoInDays,
         uint256 durationTokensClaimableAfterInDays,
-        uint256 tokensForOneWei,
-        address addressOfToken
+        address addressOfToken,
+        address addressOfEthToUsdContract
     ) 
         public
     {
@@ -87,8 +93,10 @@ contract Crowdsale {
         fundRaiser = fundRaiserAccount;
         icoDeadline = now + durationOfIcoInDays * 1 days;
         tokensClaimableAfter = now + durationTokensClaimableAfterInDays * 1 days;
-        tokensPerWei = tokensForOneWei;
-        tokenReward = Token(addressOfToken);
+        tokenReward = Token(addressOfToken);        
+        ethToUsdContract = EthToUsd(addressOfEthToUsdContract);
+        ethPrice = 200;                 // Set initial price as 1 ETH == 200$
+        tokensPerWei = ethPrice * 11;   // %10 discount for Pre Sale
     }
 
     /**
@@ -103,7 +111,7 @@ contract Crowdsale {
      */
     function() payable public {
         require(now < icoDeadline);
-        require(participants[msg.sender].whitelisted);             
+        require(participants[msg.sender].whitelisted);
         require(msg.value >= 0.05 ether); 
         uint256 tokensToBuy = SafeMath.mul(msg.value, tokensPerWei);
         require(tokensToBuy <= SafeMath.sub(tokenReward.balanceOf(this), tokensSold));
@@ -111,7 +119,19 @@ contract Crowdsale {
         amountRaisedInWei = SafeMath.add(amountRaisedInWei, msg.value);
         tokensSold = SafeMath.add(tokensSold, tokensToBuy);
     }
-    
+
+    /**
+    * Update token price by getting the latest eth to usd price from Gdax or Coinbase 
+    * (using ethToUsdContract which uses oraclize calls).
+    * How tokensPerWei is calculated: 
+    *   - Based on token price is 0.10$ and %10 discount for Pre Sale round
+    *   - tokensPerWei = (ethToUsdPrice * 10) * (110/100);
+    */ 
+    function updateTokenPrice() onlyOwner public {
+        ethPrice = ethToUsdContract.ethToUsd();
+        tokensPerWei = ethPrice * 11;
+    }
+
     /**
     * Add single address into the whitelist. 
     * Note: Use this function for a single address to save transaction fee
