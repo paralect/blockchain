@@ -24,49 +24,49 @@ import "github.com/oraclize/ethereum-api/oraclizeAPI.sol";
 
 contract EthToUsd is usingOraclize {
 
-   string public ethToUsdPrice;
-   uint256 public lastUpdateTime;
-   address public owner;
+    string public ethToUsdPrice;
+    uint256 public lastUpdateTime;
+    address public owner;
 
-   event LogPriceUpdated(string price);
-   event LogNewOraclizeQuery(string description);
+    event LogPriceUpdated(string price);
+    event LogNewOraclizeQuery(string description);
     
-   function EthToUsd() payable public {
+    function EthToUsd() public payable {
         owner = msg.sender;
         updatePriceUsingCoinBase();
-   }
+    }
    
-   function() payable public { }
+    function() payable public { }
 
-   function __callback(bytes32 id, string result) public {
-       if (msg.sender != oraclize_cbAddress()) revert();
-       ethToUsdPrice = result;
-       lastUpdateTime = now;
-       emit LogPriceUpdated(result);
-   }
+    function __callback(bytes32 id, string result) public {
+        if (msg.sender != oraclize_cbAddress()) revert();
+        ethToUsdPrice = result;
+        lastUpdateTime = now;
+        emit LogPriceUpdated(result);
+    }
 
-   function updatePriceUsingCoinBase() payable public {
-       if (oraclize_getPrice("URL") > address(this).balance) {
-           emit LogNewOraclizeQuery("Oraclize query was NOT sent, please add some ETH to cover for the query fee");
-       } else {
-           emit LogNewOraclizeQuery("Oraclize query was sent, standing by for the answer..");
-           oraclize_query("URL", "json(https://api.coinbase.com/v2/prices/ETH-USD/spot).data.amount");
-       }
-   }
+    function updatePriceUsingCoinBase() public payable {
+        if (oraclize_getPrice("URL") > address(this).balance) {
+            emit LogNewOraclizeQuery("Oraclize query was NOT sent, please add some ETH to cover for the query fee");
+        } else {
+            emit LogNewOraclizeQuery("Oraclize query was sent, standing by for the answer..");
+            oraclize_query("URL", "json(https://api.coinbase.com/v2/prices/ETH-USD/spot).data.amount");
+        }
+    }
    
-   function updatePriceUsingGdax() payable public {
-       if (oraclize_getPrice("URL") > address(this).balance) {
-           emit LogNewOraclizeQuery("Oraclize query was NOT sent, please add some ETH to cover for the query fee");
-       } else {
-           emit LogNewOraclizeQuery("Oraclize query was sent, standing by for the answer..");
-           oraclize_query("URL", "json(https://api.gdax.com/products/ETH-USD/ticker).price");
-       }
-   }
+    function updatePriceUsingGdax() public payable {
+        if (oraclize_getPrice("URL") > address(this).balance) {
+            emit LogNewOraclizeQuery("Oraclize query was NOT sent, please add some ETH to cover for the query fee");
+        } else {
+            emit LogNewOraclizeQuery("Oraclize query was sent, standing by for the answer..");
+            oraclize_query("URL", "json(https://api.gdax.com/products/ETH-USD/ticker).price");
+        }
+    }
 
-   function withdrawFunds() public {
-        require(owner == msg.sender);
+    function withdrawFunds() public {
+        require(owner == msg.sender, "Only owner can execute this function");
         owner.transfer(address(this).balance);
-   }
+    }
    
     function ethToUsd() public view returns (uint256 ethPriceInUsd) {
         return parseInt(ethToUsdPrice);
@@ -82,10 +82,10 @@ contract EthToUsd is usingOraclize {
         bytes memory bresult = bytes(_a);
         uint mint = 0;
         bool decimals = false;
-        for (uint i=0; i<bresult.length; i++){
-            if ((bresult[i] >= 48)&&(bresult[i] <= 57)){
+        for (uint i = 0; i < bresult.length; i++){
+            if ((bresult[i] >= 48) && (bresult[i] <= 57)){
                 if (decimals){
-                   if (_b == 0) break;
+                    if (_b == 0) break;
                     else _b--;
                 }
                 mint *= 10;
