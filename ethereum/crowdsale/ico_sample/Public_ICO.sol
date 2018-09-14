@@ -120,25 +120,25 @@ contract Crowdsale {
      *      - Sent ether is equal or bigger than minimum transaction (0.05 ether) 
      *      - There are enough tokens to sell in this contract (tokens balance of contract minus tokensSold)
      */
-    function() payable public {
-        require(now < icoDeadline);
-        require(participants[msg.sender].whitelisted);             
-        require(msg.value >= 0.05 ether); 
+    function() public payable {
+        require(now < icoDeadline, "ICO deadline has passed");
+        require(participants[msg.sender].whitelisted, "Participant's address is not whitelisted");
+        require(msg.value >= 0.05 ether, "Paid amount is smaller than minimum transaction amount"); 
         uint256 tokensToBuy = SafeMath.mul(msg.value, tokensPerWei);
-        require(tokensToBuy <= SafeMath.sub(tokenReward.balanceOf(this), tokensSold));
+        require(tokensToBuy <= SafeMath.sub(tokenReward.balanceOf(this), tokensSold), "Not enough tokens in the contract");
         participants[msg.sender].tokens = SafeMath.add(participants[msg.sender].tokens, tokensToBuy);      
         amountRaisedInWei = SafeMath.add(amountRaisedInWei, msg.value);
         tokensSold = SafeMath.add(tokensSold, tokensToBuy);
     }
 
     /**
-    * Update token price by getting the latest eth to usd price from Gdax or Coinbase 
-    * (using ethToUsdContract which uses oraclize calls).
+    * Update token price by getting the latest eth to usd price from ethToUsdContract
+    * (ethToUsdContract uses oraclize calls)
     * How tokensPerWei is calculated: 
     *   - Based on token price is 0.10$ and %10 discount for Pre Sale round
     *   - tokensPerWei = (ethToUsdPrice * 10) * (110/100);
     */ 
-    function updateTokenPrice() onlyOwner public {
+    function updateTokenPrice() public onlyOwner {
         ethPrice = ethToUsdContract.ethToUsd();
         // 0.10$ token price and %5 discount for Public Sale
         tokensPerWei = SafeMath.div(SafeMath.mul(ethPrice, 105), 10);
@@ -148,7 +148,7 @@ contract Crowdsale {
     * Add single address into the whitelist. 
     * Note: Use this function for a single address to save transaction fee
     */ 
-    function addToWhitelist(address addr) onlyOwner public {
+    function addToWhitelist(address addr) public onlyOwner {
         participants[addr].whitelisted = true;   
     }
 
@@ -156,7 +156,7 @@ contract Crowdsale {
     * Remove single address from the whitelist. 
     * Note: Use this function for a single address to save transaction fee
     */ 
-    function removeFromWhitelist(address addr) onlyOwner public {
+    function removeFromWhitelist(address addr) public onlyOwner {
         participants[addr].whitelisted = false;   
     }
 
@@ -164,7 +164,7 @@ contract Crowdsale {
     * Add multiple addresses into the whitelist. 
     * Note: Use this function for more than one address to save transaction fee
     */ 
-    function addAddressesToWhitelist(address[] addresses) onlyOwner public {
+    function addAddressesToWhitelist(address[] addresses) public onlyOwner {
         for (uint i = 0; i < addresses.length; i++) {
             participants[addresses[i]].whitelisted = true;   
         }
@@ -174,7 +174,7 @@ contract Crowdsale {
     * Remove multiple addresses from the whitelist
     * Note: Use this function for more than one address to save transaction fee
     */ 
-    function removeAddressesFromWhitelist(address[] addresses) onlyOwner public {
+    function removeAddressesFromWhitelist(address[] addresses) public onlyOwner {
         for (uint i = 0; i < addresses.length; i++) {
             participants[addresses[i]].whitelisted = false;   
         }
@@ -185,8 +185,8 @@ contract Crowdsale {
     /**
     * Fundraiser address claims the raised funds after ICO deadline
     */ 
-    function withdrawFunds() afterIcoDeadline public {
-        require(fundRaiser == msg.sender);
+    function withdrawFunds() public afterIcoDeadline {
+        require(fundRaiser == msg.sender, "Only fundraiser address can withdraw funds");
         fundRaiser.transfer(address(this).balance);
         emit FundTransfer(fundRaiser, address(this).balance);        
     }
@@ -195,7 +195,7 @@ contract Crowdsale {
     * Burn unsold tokens after ICO deadline
     * Note: This function is designed to be used after Public-ICO period to burn unsold tokens
     */
-    function burnUnsoldTokens()  onlyOwner afterIcoDeadline public {  
+    function burnUnsoldTokens() public onlyOwner afterIcoDeadline {
         uint256 tokensUnclaimed = SafeMath.sub(tokensSold, tokensClaimed);
         uint256 unsoldTokens = SafeMath.sub(tokenReward.balanceOf(this), tokensUnclaimed);
         tokenReward.burn(unsoldTokens);
@@ -206,9 +206,9 @@ contract Crowdsale {
     /**
     * Each participant will be able to claim his tokens after duration tokensClaimableAfter
     */ 
-    function withdrawTokens() afterTokensClaimableDeadline public {
-        require(participants[msg.sender].whitelisted);                
-        require(!participants[msg.sender].tokensClaimed);        
+    function withdrawTokens() public afterTokensClaimableDeadline {
+        require(participants[msg.sender].whitelisted, "Only whitelisted participants can withdraw tokens");
+        require(!participants[msg.sender].tokensClaimed, "Tokens can be withdrawn only once");
         participants[msg.sender].tokensClaimed = true;
         uint256 tokens = participants[msg.sender].tokens;
         tokenReward.transfer(msg.sender, tokens); 
