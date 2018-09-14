@@ -96,7 +96,7 @@ contract Crowdsale {
         tokenReward = Token(addressOfToken);        
         ethToUsdContract = EthToUsd(addressOfEthToUsdContract);
         ethPrice = 200;                 // Set initial price as 1 ETH == 200$
-        tokensPerWei = ethPrice * 11;   // %10 discount for Pre Sale
+        tokensPerWei = SafeMath.mul(ethPrice, 11);   // %10 discount for Pre Sale
     }
 
     /**
@@ -129,7 +129,7 @@ contract Crowdsale {
     */ 
     function updateTokenPrice() public onlyOwner {
         ethPrice = ethToUsdContract.ethToUsd();
-        tokensPerWei = ethPrice * 11;
+        tokensPerWei = SafeMath.mul(ethPrice, 11);
     }
 
     /**
