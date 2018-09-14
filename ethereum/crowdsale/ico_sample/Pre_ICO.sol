@@ -96,7 +96,8 @@ contract Crowdsale {
         tokenReward = Token(addressOfToken);        
         ethToUsdContract = EthToUsd(addressOfEthToUsdContract);
         ethPrice = 200;                 // Set initial price as 1 ETH == 200$
-        tokensPerWei = SafeMath.mul(ethPrice, 11);   // %10 discount for Pre Sale
+        // 0.10$ token price and %10 discount for Pre Sale
+        tokensPerWei = SafeMath.mul(ethPrice, 11);
     }
 
     /**
@@ -109,7 +110,7 @@ contract Crowdsale {
      *      - Sent ether is equal or bigger than minimum transaction (0.05 ether) 
      *      - There are enough tokens to sell in this contract (tokens balance of contract minus tokensSold)
      */
-    function() payable public {
+    function() public payable {
         require(now < icoDeadline, "ICO deadline has passed");
         require(participants[msg.sender].whitelisted, "Participant's address is not whitelisted");
         require(msg.value >= 0.05 ether, "Paid amount is smaller than minimum transaction amount"); 
@@ -129,6 +130,7 @@ contract Crowdsale {
     */ 
     function updateTokenPrice() public onlyOwner {
         ethPrice = ethToUsdContract.ethToUsd();
+        // 0.10$ token price and %10 discount for Pre Sale
         tokensPerWei = SafeMath.mul(ethPrice, 11);
     }
 
