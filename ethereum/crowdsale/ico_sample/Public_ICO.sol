@@ -21,6 +21,16 @@ library SafeMath {
     }
 
     /**
+    * @dev Integer division of two numbers, truncating the quotient.
+    */
+    function div(uint256 a, uint256 b) internal pure returns (uint256) {
+        // assert(b > 0); // Solidity automatically throws when dividing by 0
+        // uint256 c = a / b;
+        // assert(a == b * c + a % b); // There is no case in which this doesn't hold
+        return a / b;
+    }
+
+    /**
     * @dev Subtracts two numbers, throws on overflow (i.e. if subtrahend is greater than minuend).
     */
     function sub(uint256 a, uint256 b) internal pure returns (uint256) {
@@ -44,6 +54,10 @@ interface Token {
     function balanceOf(address owner) external returns (uint256 balance);
 }
 
+interface EthToUsd {
+    function ethToUsd() external returns (uint256 ethPriceInUsd);
+}
+
 contract Crowdsale {
     address public owner;                       // Address of the contract owner
     address public fundRaiser;                  // Address which can withraw funds raised
@@ -53,7 +67,9 @@ contract Crowdsale {
     uint256 public icoDeadline;                 // Duration this ICO will end
     uint256 public tokensClaimableAfter;        // Duration after tokens will be claimable
     uint256 public tokensPerWei;                // How many token a buyer gets per wei 
-    Token public tokenReward;                   // Token being distributed 
+    uint256 public ethPrice;                    // ETH to USD price from Gdax or Coinbase using oraclize
+    Token public tokenReward;                   // Token contract 
+    EthToUsd public ethToUsdContract;           // Oraclize service contract to get Eth to Usd rate
 
     // Map of crowdsale participants, address as key and Participant structure as value
     mapping(address => Participant) public participants;    
@@ -78,8 +94,8 @@ contract Crowdsale {
         address fundRaiserAccount,
         uint256 durationOfIcoInDays,
         uint256 durationTokensClaimableAfterInDays,
-        uint256 tokensForOneWei,
-        address addressOfToken
+        address addressOfToken,
+        address addressOfEthToUsdContract
     ) 
         public
     {
@@ -87,8 +103,11 @@ contract Crowdsale {
         fundRaiser = fundRaiserAccount;
         icoDeadline = now + durationOfIcoInDays * 1 days;
         tokensClaimableAfter = now + durationTokensClaimableAfterInDays * 1 days;
-        tokensPerWei = tokensForOneWei;
-        tokenReward = Token(addressOfToken);
+        tokenReward = Token(addressOfToken);        
+        ethToUsdContract = EthToUsd(addressOfEthToUsdContract);
+        ethPrice = 200;                 // Set initial price as 1 ETH == 200$
+        // 0.10$ token price and %5 discount for Public Sale
+        tokensPerWei = SafeMath.div(SafeMath.mul(ethPrice, 105), 10);
     }
 
     /**
@@ -111,7 +130,20 @@ contract Crowdsale {
         amountRaisedInWei = SafeMath.add(amountRaisedInWei, msg.value);
         tokensSold = SafeMath.add(tokensSold, tokensToBuy);
     }
-    
+
+    /**
+    * Update token price by getting the latest eth to usd price from Gdax or Coinbase 
+    * (using ethToUsdContract which uses oraclize calls).
+    * How tokensPerWei is calculated: 
+    *   - Based on token price is 0.10$ and %10 discount for Pre Sale round
+    *   - tokensPerWei = (ethToUsdPrice * 10) * (110/100);
+    */ 
+    function updateTokenPrice() onlyOwner public {
+        ethPrice = ethToUsdContract.ethToUsd();
+        // 0.10$ token price and %5 discount for Public Sale
+        tokensPerWei = SafeMath.div(SafeMath.mul(ethPrice, 105), 10);
+    }
+
     /**
     * Add single address into the whitelist. 
     * Note: Use this function for a single address to save transaction fee
@@ -161,7 +193,7 @@ contract Crowdsale {
 
     /**
     * Burn unsold tokens after ICO deadline
-    * Note: This function is designed to be used after Final-ICO period to burn unsold tokens
+    * Note: This function is designed to be used after Public-ICO period to burn unsold tokens
     */
     function burnUnsoldTokens()  onlyOwner afterIcoDeadline public {  
         uint256 tokensUnclaimed = SafeMath.sub(tokensSold, tokensClaimed);
