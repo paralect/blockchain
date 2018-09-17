@@ -67,7 +67,7 @@ contract Crowdsale {
     uint256 public icoDeadline;                 // Duration this ICO will end
     uint256 public tokensClaimableAfter;        // Duration after tokens will be claimable
     uint256 public tokensPerWei;                // How many token a buyer gets per wei 
-    uint256 public ethPrice;                    // ETH to USD price from Gdax or Coinbase using oraclize
+    uint256 public ethPrice;                    // ETH to USD price from Gdax or Coinbase using oraclize calls
     Token public tokenReward;                   // Token contract 
     EthToUsd public ethToUsdContract;           // Oraclize service contract to get Eth to Usd rate
 
@@ -106,8 +106,8 @@ contract Crowdsale {
         tokenReward = Token(addressOfToken);        
         ethToUsdContract = EthToUsd(addressOfEthToUsdContract);
         ethPrice = 200;                 // Set initial price as 1 ETH == 200$
-        // 0.10$ token price and %5 discount for Public Sale
-        tokensPerWei = SafeMath.div(SafeMath.mul(ethPrice, 105), 10);
+        // token price is $0.10 and %5 discount for Public Sale
+        tokensPerWei = SafeMath.div(SafeMath.mul(ethPrice, 105), 10); // tokensPerWei is 2100 initially
     }
 
     /**
@@ -135,12 +135,11 @@ contract Crowdsale {
     * Update token price by getting the latest eth to usd price from ethToUsdContract
     * (ethToUsdContract uses oraclize calls)
     * How tokensPerWei is calculated: 
-    *   - Based on token price is 0.10$ and %10 discount for Pre Sale round
-    *   - tokensPerWei = (ethToUsdPrice * 10) * (110/100);
+    *   - Based on token price is $0.10 and %5 discount for Public Sale
+    *   - tokensPerWei = (ethToUsdPrice * 10) * (105/100);
     */ 
     function updateTokenPrice() public onlyOwner {
         ethPrice = ethToUsdContract.ethToUsd();
-        // 0.10$ token price and %5 discount for Public Sale
         tokensPerWei = SafeMath.div(SafeMath.mul(ethPrice, 105), 10);
     }
 

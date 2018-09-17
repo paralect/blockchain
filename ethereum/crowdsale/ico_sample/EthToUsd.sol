@@ -82,9 +82,9 @@ contract EthToUsd is usingOraclize {
         bytes memory bresult = bytes(_a);
         uint mint = 0;
         bool decimals = false;
-        for (uint i = 0; i < bresult.length; i++){
-            if ((bresult[i] >= 48) && (bresult[i] <= 57)){
-                if (decimals){
+        for (uint i = 0; i < bresult.length; i++) {
+            if ((bresult[i] >= 48) && (bresult[i] <= 57)) {
+                if (decimals) {
                     if (_b == 0) break;
                     else _b--;
                 }
