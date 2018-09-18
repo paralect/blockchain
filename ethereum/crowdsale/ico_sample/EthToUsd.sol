@@ -54,17 +54,17 @@ contract EthToUsd is usingOraclize {
         }
     }
    
-    function updatePriceUsingGdax() public payable {
+    function updatePriceUsingBitstamp() public payable {
         if (oraclize_getPrice("URL") > address(this).balance) {
             emit LogNewOraclizeQuery("Oraclize query was NOT sent, please add some ETH to cover for the query fee");
         } else {
             emit LogNewOraclizeQuery("Oraclize query was sent, standing by for the answer..");
-            oraclize_query("URL", "json(https://api.gdax.com/products/ETH-USD/ticker).price");
+            oraclize_query("URL", "json(https://www.bitstamp.net/api/v2/ticker/ethusd/).last");
         }
     }
 
     function withdrawFunds() public {
-        require(owner == msg.sender, "Only owner can execute this function");
+        require(owner == msg.sender);
         owner.transfer(address(this).balance);
     }
    
