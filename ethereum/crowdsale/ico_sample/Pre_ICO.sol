@@ -57,7 +57,7 @@ contract Crowdsale {
     address public fundRaiser;                  // Address which can withraw funds raised
     uint256 public amountRaisedInWei;           // Total amount of ether raised in wei
     uint256 public tokensSold;                  // Total number of tokens sold
-    uint256 public tokensClaimed;               // Total Number of tokens claimed by participants
+    uint256 public tokensClaimed;               // Total Number of tokens claimed by all participants
     uint256 public icoDeadline;                 // Duration this ICO will end
     uint256 public tokensClaimableAfter;        // Duration after tokens will be claimable
     uint256 public tokensPerWei;                // How many token a buyer gets per wei 
