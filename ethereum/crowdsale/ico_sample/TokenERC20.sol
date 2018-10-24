@@ -1,5 +1,6 @@
 pragma solidity 0.4.21;
 
+
 /**
 * @title SafeMath by OpenZeppelin (commit: 5daaf60)
 * @dev Math operations with safety checks that throw on error
@@ -22,6 +23,7 @@ library SafeMath {
         return c;
     }
 }
+
 
 contract TokenERC20 {
     string public name;

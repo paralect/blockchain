@@ -22,6 +22,7 @@ THE SOFTWARE.
 pragma solidity 0.4.21;
 import "github.com/oraclize/ethereum-api/oraclizeAPI.sol";
 
+
 contract EthToUsd is usingOraclize {
 
     string public ethToUsdPrice;
@@ -36,7 +37,7 @@ contract EthToUsd is usingOraclize {
         updatePriceUsingCoinBase();
     }
    
-    function() payable public { }
+    function() public payable { }
 
     function __callback(bytes32 id, string result) public {
         if (msg.sender != oraclize_cbAddress()) revert();
@@ -86,8 +87,10 @@ contract EthToUsd is usingOraclize {
         for (uint i = 0; i < bresult.length; i++) {
             if ((bresult[i] >= 48) && (bresult[i] <= 57)) {
                 if (decimals) {
-                    if (0 == b) break;
-                    else b--;
+                    if (0 == b) 
+                        break;
+                    else 
+                        b--;
                 }
                 mint *= 10;
                 mint += uint(bresult[i]) - 48;

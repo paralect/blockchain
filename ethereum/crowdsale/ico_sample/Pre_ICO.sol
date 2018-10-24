@@ -1,5 +1,6 @@
 pragma solidity 0.4.21;
 
+
 /**
 * @title SafeMath by OpenZeppelin (commit: 5daaf60)
 * @dev Math operations with safety checks that throw on error
@@ -38,15 +39,18 @@ library SafeMath {
     }
 }
 
+
 interface Token {
     function transfer(address to, uint256 value) external returns (bool success);
     function burn(uint256 amount) external;
     function balanceOf(address owner) external returns (uint256 balance);
 }
 
+
 interface EthToUsd {
     function ethToUsd() external returns (uint256 ethPriceInUsd);
 }
+
 
 contract Crowdsale {
     address public owner;                       // Address of the contract owner
