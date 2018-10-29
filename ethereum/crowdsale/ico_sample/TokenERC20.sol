@@ -1,4 +1,4 @@
-pragma solidity 0.4.21;
+pragma solidity 0.4.25;
 
 
 /**
@@ -43,7 +43,7 @@ contract TokenERC20 {
      *
      * Initializes contract with initial supply tokens assigned to the creator of the contract
      */
-    function TokenERC20(
+    constructor(
         uint256 initialSupply,
         string tokenName,
         string tokenSymbol

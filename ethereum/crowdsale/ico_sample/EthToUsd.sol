@@ -19,7 +19,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-pragma solidity 0.4.21;
+pragma solidity 0.4.25;
 import "github.com/oraclize/ethereum-api/oraclizeAPI.sol";
 
 
@@ -32,7 +32,7 @@ contract EthToUsd is usingOraclize {
     event LogPriceUpdated(string price);
     event LogNewOraclizeQuery(string description);
     
-    function EthToUsd() public payable {
+    constructor() public payable {
         owner = msg.sender;
         updatePriceUsingCoinBase();
     }
@@ -65,7 +65,7 @@ contract EthToUsd is usingOraclize {
     }
 
     function withdrawFunds() public {
-        require(owner == msg.sender);
+        require(owner == msg.sender, "Only contract owner can execute this function");
         owner.transfer(address(this).balance);
     }
    
@@ -100,4 +100,3 @@ contract EthToUsd is usingOraclize {
         return mint;
     }
 }
-

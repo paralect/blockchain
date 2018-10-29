@@ -1,4 +1,4 @@
-pragma solidity 0.4.21;
+pragma solidity 0.4.25;
 
 
 /**
@@ -77,14 +77,13 @@ contract Crowdsale {
 
     event FundTransfer(address to, uint amount);
 
-    modifier afterIcoDeadline() { if (now >= icoDeadline) _; }
-    modifier afterTokensClaimableDeadline() { if (now >= tokensClaimableAfter) _; }
-    modifier onlyOwner() { require(msg.sender == owner); _; }
+    modifier afterIcoDeadline() { require(now >= icoDeadline, "Only after ICO deadline"); _; }
+    modifier afterTokensClaimableDeadline() { 
+        require(now >= tokensClaimableAfter, "Only after tokens claimable deadline"); _; 
+    }
+    modifier onlyOwner() { require(msg.sender == owner, "Only owner can execute"); _; }
 
-    /**
-     * Constructor function
-     */
-    function Crowdsale(
+    constructor(
         address fundRaiserAccount,
         uint256 durationOfIcoInDays,
         uint256 durationTokensClaimableAfterInDays,
@@ -115,11 +114,11 @@ contract Crowdsale {
      *      - There are enough tokens to sell in this contract (tokens balance of contract minus tokensSold)
      */
     function() public payable {
-        require(now < icoDeadline);
-        require(participants[msg.sender].whitelisted);
-        require(msg.value >= 0.05 ether);
+        require(now < icoDeadline, "ICO deadline has passed");
+        require(participants[msg.sender].whitelisted, "Participant's address is not whitelisted");
+        require(msg.value >= 0.05 ether, "Paid amount is smaller than minimum transaction amount");
         uint256 tokensToBuy = SafeMath.mul(msg.value, tokensPerWei);
-        require(tokensToBuy <= SafeMath.sub(tokenReward.balanceOf(this), tokensSold));
+        require(tokensToBuy <= SafeMath.sub(tokenReward.balanceOf(this), tokensSold), "Not enough tokens in the contract");
         participants[msg.sender].tokens = SafeMath.add(participants[msg.sender].tokens, tokensToBuy);      
         amountRaisedInWei = SafeMath.add(amountRaisedInWei, msg.value);
         tokensSold = SafeMath.add(tokensSold, tokensToBuy);
@@ -179,7 +178,7 @@ contract Crowdsale {
     * Fundraiser address claims the raised funds after ICO deadline
     */ 
     function withdrawFunds() public afterIcoDeadline {
-        require(fundRaiser == msg.sender);
+        require(fundRaiser == msg.sender, "Only fundraiser address can withdraw funds");
         fundRaiser.transfer(address(this).balance);
         emit FundTransfer(fundRaiser, address(this).balance);        
     }
@@ -200,8 +199,8 @@ contract Crowdsale {
     * Each participant will be able to claim his tokens after duration tokensClaimableAfter
     */ 
     function withdrawTokens() public afterTokensClaimableDeadline {
-        require(participants[msg.sender].whitelisted);
-        require(!participants[msg.sender].tokensClaimed);
+        require(participants[msg.sender].whitelisted, "Only whitelisted participants can withdraw tokens");
+        require(!participants[msg.sender].tokensClaimed, "Tokens can be withdrawn only once");
         participants[msg.sender].tokensClaimed = true;
         uint256 tokens = participants[msg.sender].tokens;
         tokenReward.transfer(msg.sender, tokens); 
