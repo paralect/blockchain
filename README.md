@@ -16,6 +16,9 @@ Welcome to the blockchain wiki!
    d. [Public (Permissionless) Blockchains](#1d)  
    e. [Private (Permissioned) Blockchains](#1e)  
       &nbsp; &nbsp; i. [Hyperledger Fabric](#1ei)  
+      &nbsp; &nbsp; ii. [Quorum](#1eii)  
+      &nbsp; &nbsp; ii. [MultiChain](#1eiii)  
+      &nbsp; &nbsp; iv. [Corda](#1eiv)  
 2. [Comparison of smart-contract platforms](#2)
 3. [Selected smart-contract platform](#3)
 4. [Ideas for smart contacts](#4)  
@@ -103,8 +106,6 @@ Source: http://www.relativelyinteresting.com/wp-content/uploads/2016/06/how-a-bi
 <a name="1d"></a>  
 ### **d) Public (Permissionless)**
 
-**i) Public (Permissionless) Blockchains:**
-
 Ethereum, Bitcoin etc...
 
 On public blockchains, there are no restrictions that prevent participants from accessing the blockchain. Any individual or group can set up a node and participate in the consensus mechanism of a public blockchain. 
@@ -144,6 +145,48 @@ Hyperledger project is an umbrella project of open source blockchains and relate
 	Privacy and confidentiality of transactions and data pertaining to business transactions        
 
 Ref: https://www.theblockcrypto.com/2018/12/10/crypto-simplified-explaining-permissioned-blockchains/  
+
+
+<a name="1eii"></a>  
+**ii) Quorum**
+
+A permissioned implementation of Ethereum supporting data privacy (https://github.com/jpmorganchase/quorum)
+
+Quorum is an Ethereum based DLT. The objective behind this to provide a permissioned implementation of Ethereum which supports transactions and contract privacy.
+
+The functioning of Quorum is similar to Ethereum but with a few differences. Here is how Quorum is different from Ethereum blockchain:
+
+- Network and peer permissions management
+- Enhanced transaction and contract privacy
+- Voting-based consensus mechanisms
+- Better performance
+
+Microsoft Makes JPMorgan’s Quorum the Preferred Blockchain for Azure Cloud
+https://www.coindesk.com/microsoft-makes-jpmorgans-quorum-the-preferred-blockchain-for-azure-cloud  
+
+
+<a name="1eiii"></a>  
+**iii) MultiChain**
+
+MultiChain is a platform where users can establish and deploy private blockchains within an organization or between organizations. It is an open source platform based on Bitcoin’s Blockchain, except in MultiChain you must configure the multichain at every node as opposed to the Bitcoin Blockchain where anyone can connect and transfer assets on the chain.
+
+/// Key features:
+
+- Native multi-currency support  
+- Expected to be faster than Bitcoin  
+- Permissioned management  
+- Quick deployments  
+- Supported languages: Python, C#, JavaScript, PHP, Ruby  
+- MultiChain forked from the Bitcoin Blockchain allowing users to control whether the chain is private or public, permissions to connect to the network, target time for blocks, and maximum block size and metadata.    
+
+Ref: https://medium.com/coinmonks/a-step-by-step-guide-to-building-and-deploying-multichain-private-blockchains-d3b27b5cf2b2  
+
+
+<a name="1eiv"></a>  
+**iv) Corda**  
+
+https://github.com/corda/corda
+
 
 ----
 
