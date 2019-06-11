@@ -130,7 +130,7 @@ Hyperledger project is an umbrella project of open source blockchains and relate
 /// Features of Fabric 
 
 - Smart contracts authored in general-purpose programming languages such as:   
-	. Java, Go and Node.js
+	. Javascript, Java, Go
 - Smart contracts (“chaincode”) run within a container environment (e.g. Docker) for isolation. 	
 - Fabric has pluggable consensus protocols
 - Fabric can leverage consensus protocols that do not require a native cryptocurrency  
