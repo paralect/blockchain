@@ -13,6 +13,9 @@ Welcome to the blockchain wiki!
    a. [What is Blockchain?](#1a)  
    b. [Block Structure](#1b)  
    c. [How Blockchain works](#1c)    
+   d. [Public (Permissionless) Blockchains](#1d)  
+   e. [Private (Permissioned) Blockchains](#1e)  
+      &nbsp; &nbsp; i. [Hyperledger Fabric](#1ei)  
 2. [Comparison of smart-contract platforms](#2)
 3. [Selected smart-contract platform](#3)
 4. [Ideas for smart contacts](#4)  
@@ -83,7 +86,6 @@ Source: https://medium.com/@lhartikk/a-blockchain-in-200-lines-of-code-963cc1cc0
 Source: http://computersecuritypgp.blogspot.com/2016/05/what-is-blockchain.html
 
 <a name="1c"></a>  
-
 ### **c) How Blockchain works:**
 
 **Simple**  
@@ -98,8 +100,55 @@ Source: https://bitsapphire.com/wp-content/uploads/2017/01/Blockchain-industry-i
 
 Source: http://www.relativelyinteresting.com/wp-content/uploads/2016/06/how-a-bitcoin-transaction-works.jpg
 
+<a name="1d"></a>  
+### **d) Public (Permissionless)**
+
+**i) Public (Permissionless) Blockchains:**
+
+Ethereum, Bitcoin etc...
+
+On public blockchains, there are no restrictions that prevent participants from accessing the blockchain. Any individual or group can set up a node and participate in the consensus mechanism of a public blockchain. 
+
+<a name="1e"></a>  
+### **e) Private (Permissioned) Blockchains:**
+
+<img src="/wiki/images/permissioned_blockchains.png" width="500" />   
+
+The primary difference between permissioned blockchains and public (permissionless) blockchains is the ability for members to restrict access.
+
+<a name="1ei"></a>  
+**i) Hyperledger Fabric**
+
+/// Hyperledger Fabric  
+
+Hyperledger Fabric is an open source enterprise-grade permissioned distributed ledger 
+technology (DLT) platform, designed for use in enterprise contexts.
+
+/// Features of fabric 
+
+- Smart contracts authored in general-purpose programming languages such as: 
+	. Java, Go and Node.js.
+- Smart contracts (“chaincode”) run within a container environment (e.g. Docker) for isolation. 	
+- Fabric has pluggable consensus protocols
+- Fabric can leverage consensus protocols that do not require a native cryptocurrency
+	. Details: 
+	  To incent costly mining or to fuel smart contract execution. Avoidance of a cryptocurrency 
+	  reduces some significant risk/attack vectors, and absence of cryptographic mining operations 
+	  means that the platform can be deployed with roughly the same operational cost as any other 
+	  distributed system.
+- For enterprise use, we need to consider the following requirements:
+	Participants must be identified/identifiable
+	Networks need to be permissioned
+	High transaction throughput performance
+	Low latency of transaction confirmation
+	Privacy and confidentiality of transactions and data pertaining to business transactions
+   
+   
+
+Ref: https://www.theblockcrypto.com/2018/12/10/crypto-simplified-explaining-permissioned-blockchains/  
 
 ----
+
 
 <a name="2"></a>  
 ## 2. Comparison of smart-contract platforms (Draft)
