@@ -106,16 +106,18 @@ Source: http://www.relativelyinteresting.com/wp-content/uploads/2016/06/how-a-bi
 <a name="1d"></a>  
 ### **d) Public (Permissionless)**
 
+On public blockchains, there are no restrictions that prevent participants from accessing the blockchain. Any individual or group can set up a node and participate in the consensus mechanism of a public blockchain. 
+
 Ethereum, Bitcoin etc...
 
-On public blockchains, there are no restrictions that prevent participants from accessing the blockchain. Any individual or group can set up a node and participate in the consensus mechanism of a public blockchain. 
 
 <a name="1e"></a>  
 ### **e) Private (Permissioned) Blockchains:**
 
+The primary difference between permissioned blockchains and public (permissionless) blockchains is the ability for members to restrict access.
+
 <img src="/wiki/images/permissioned_blockchains.png" width="500" />   
 
-The primary difference between permissioned blockchains and public (permissionless) blockchains is the ability for members to restrict access.
 
 <a name="1ei"></a>  
 **i) Hyperledger Fabric**
@@ -161,7 +163,7 @@ The functioning of Quorum is similar to Ethereum but with a few differences. Her
 - Voting-based consensus mechanisms
 - Better performance
 
-Microsoft Makes JPMorgan’s Quorum the Preferred Blockchain for Azure Cloud
+Microsoft Makes JPMorgan’s Quorum the Preferred Blockchain for Azure Cloud  
 https://www.coindesk.com/microsoft-makes-jpmorgans-quorum-the-preferred-blockchain-for-azure-cloud  
 
 
