@@ -1,8 +1,5 @@
 # blockchain
-A blockchain and smart contracts research project
-
-### For easy access wiki is located here in README.md temporarily.
------------------------------------------
+A blockchain and smart contracts research & dev. project
 
 Welcome to the blockchain wiki!
 
