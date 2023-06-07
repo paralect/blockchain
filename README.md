@@ -1,6 +1,8 @@
 # blockchain
 A blockchain and smart contracts research & dev. project
 
+**New [2023]:** See https://github.com/paralect/blockchain/issues for R&D tasks
+
 Welcome to the blockchain wiki!
 
 **Table of Contents:**
