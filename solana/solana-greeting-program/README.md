@@ -1,3 +1,9 @@
+# A Hello World program for Solana blockchain 
+Assuming user has already installed Solana toolchain and created an account for Solana devnet:  
+https://docs.solana.com/cli/install-solana-cli-tools
+
+Section 0 below is a summary of all other sections.
+
 # 0. Quick Usage
 
 E.g.
