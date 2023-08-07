@@ -1,5 +1,4 @@
-# blockchain
-A blockchain and smart contracts research & dev. project
+# Blockchain Research & Dev. Project
 
 **New [2023]:** Solana blockhain: https://github.com/paralect/blockchain/tree/master/solana  
 **New [2023]:** R&D tasks for learning: https://github.com/paralect/blockchain/issues
