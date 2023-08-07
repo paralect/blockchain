@@ -18,7 +18,6 @@ exclude_entrypoint = []
 [dependencies]
 solana-program = "1"
 borsh = "0.9.1"
-# chainlink_solana = "1.0.0"
 
 [lib]
 name = "helloworld"

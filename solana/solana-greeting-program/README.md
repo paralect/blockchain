@@ -2,7 +2,7 @@
 
 E.g.
 ```
-// Deploy Greeting program (contract)
+// Deploy Greeting program (smart contract)
 cd program
 cargo build-bpf
 solana program deploy target/deploy/helloworld.so 
@@ -11,24 +11,30 @@ Fee: 10000
 TX:
 https://explorer.solana.com/tx/5YabTWTQcj6do8GhDqcc3XFe3YhRMFQWZCf8amtjLMAf7e1qzPs8pJi55xYJ91fbzrvBBiwNAEMpWeciGw9UEknN?cluster=devnet
 
-// Use Greeting program (contract)
+// Use Greeting program (smart contract)
 cd client
 cargo r ../program/target/deploy/helloworld-keypair.json
 
-1. Connected to remote solana node running version (1.16.4).
+1. Connected to remote solana node running version (1.16.5).
 
 (1_418_720) lamports are required for this transaction.
 User: 7GDXzkmtqNG2BZmesUyv2qrbRoovv71TApd1bWSsZAuc
-Balance: 9.992446251 Sol (9_992_446_251 lamports)
-Greeting Program: Es5dTX5VbmPfE7NVBD6hozEC6M77NCHNVtZ1BGMdU7M6
+Balance: 14.201951411 Sol (14_201_951_411 lamports)
 
-2. Write to chain: Sending greeting ... (sending tx) 
+2. Creating account for greeting program to read/write its data...
+... not created, account already exists 
 
-3. Read from chain:
-Data Account to read: greeting_pubkey: 5XFdLs68i3PZBoq4aVBzxGc7f7LJgozqHEU4GCjqZVx6
+Greeting Program: gF8U28yn9WfGFxh7Ykq7tBfCUhUZJWp2dAf7urbevPm
+Program's data account to read/write: 8b9KfuGKsC7HzyVTUrFPPvvEjinh512voroGSRgo7Beq
 (derived addr for a given user and program combination)
-> greeting count: 7
-> greeting obj: GreetingSchema { counter: 7 }
+
+3. Write to chain: Sending greeting ... (sending tx)
+> Quick read before write:
+> greeting obj: GreetingSchema { counter: 0 }
+> Success
+
+4. Read from chain:
+> greeting obj: GreetingSchema { counter: 1 }
 
 End
 ```

@@ -1,7 +1,7 @@
 use solana_sdk::signer::Signer;
 use solana_program::native_token::lamports_to_sol;
 use zeke_contract as zc;
-use zc::utils::get_greeting_public_key;
+use zc::utils::greeting_public_key;
 
 fn main() {
     let pretty_print = |num: u64| { // e.g. 10000 -> 10_000
@@ -18,6 +18,7 @@ fn main() {
     }
     let keypair_path = &args[1];
 
+    // 1. Connect to chain
     let connection = zc::client::establish_connection().unwrap();
     println!(
         "\n1. Connected to remote solana node running version ({}).\n",
@@ -48,19 +49,27 @@ fn main() {
     }
 
     let program = zc::client::get_program(keypair_path, &connection).unwrap();
-    println!("Greeting Program: {:?}\n", program.pubkey());
-    let key = get_greeting_public_key(&user.pubkey(), &program.pubkey()).unwrap();
-    println!("Data account of the program to read: {:?}", key);
-    println!("(derived addr for a given user and program combination)");
 
     // 2. Optional - Create account for greeting program to write its data 
-    // (Fee: 5000)
-    // (a new addr for a given user and program combination)
-    // zc::client::create_greeting_account(&user, &program, &connection).unwrap();
+    // (Fee: 5000) (a new addr for a given user and program combination)
+    println!("\n2. Creating account for greeting program to read/write its data...");
+    zc::client::create_greeting_account(&user, &program, &connection).unwrap();
+
+    // Print some info
+    println!("\nGreeting Program: {:?}", program.pubkey());
+    let key = greeting_public_key(&user.pubkey(), &program.pubkey()).unwrap();
+    println!("Program's data account to read/write: {:?}", key);
+    println!("(derived addr for a given user and program combination)\n");
 
     // 3. write 
-    println!("3. Write to chain: Sending greeting ... (sending tx) \n");
+    println!("3. Write to chain: Sending greeting ... (sending tx)");
+    println!("> Quick read before write:");
+    println!(
+        "> greeting obj: {:?}",
+        zc::client::get_greeting_obj(&user, &program, &connection).unwrap()
+    );
     zc::client::greet(&user, &program, &connection).unwrap();
+    println!("> Success\n");
 
     // 4. read
     println!("4. Read from chain:");
@@ -70,7 +79,7 @@ fn main() {
     // );
     println!(
         "> greeting obj: {:?}",
-        zc::client::get_greeting_obj(&user, &program, &connection)//.unwrap()
+        zc::client::get_greeting_obj(&user, &program, &connection).unwrap()
     );
     println!("\nEnd\n");
 }
