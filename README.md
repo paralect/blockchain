@@ -3,6 +3,10 @@
 **New [2023]:** Solana blockhain: https://github.com/paralect/blockchain/tree/master/solana  
 **New [2023]:** R&D tasks for learning: https://github.com/paralect/blockchain/issues
 
+For people who prefers blog posts:  
+https://blog.paralect.com/post/its-blockchain-101    
+https://blog.paralect.com/post/how-smart-contracts-streamline-payment-processes   
+
 Welcome to the blockchain wiki!
 
 **Table of Contents:**
