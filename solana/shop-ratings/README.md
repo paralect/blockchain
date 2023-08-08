@@ -4,7 +4,7 @@ Solana blockchain.
 
 Info: 
 - For simplicity, a Shop can have max 3 ratings (`struct Shop { ratings: [u32; 3] }`)
-- Each Shop object and its data lives in a unique PDA (a program's data account)
+- Each Shop object and its data (e.g. ratings) lives in a unique PDA (a program's data account) on Solana blockchain
 
 Features:
 - Add new rating for a shop
