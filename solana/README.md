@@ -1,7 +1,7 @@
 
 # Solana blockchain
 
-See the folders in this root path.
+Select a folders to see more info
 
 ---- 
 
