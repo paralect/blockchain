@@ -1,7 +1,12 @@
 
 # Solana blockchain
 
-Select a folders to see more info
+From medium to simple in order:  
+- shop-ratings 
+- solana-greeting-program 
+- hello-world
+
+Select a folder to see more info, each folder is an independent project.
 
 ---- 
 
