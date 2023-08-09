@@ -5,7 +5,8 @@
 
 For people who prefers blog posts:  
 https://blog.paralect.com/post/its-blockchain-101    
-https://blog.paralect.com/post/how-smart-contracts-streamline-payment-processes   
+https://blog.paralect.com/post/how-smart-contracts-streamline-payment-processes  
+[To-be-published] [Introducing Parachain - Paralect's first private blockchain](https://docs.google.com/document/d/1bzLPJXGxCO30jloaOzsR2CqYAaL9jGGaAsrLqw8jRFU/edit?usp=sharing)
 
 Welcome to the blockchain wiki!
 
