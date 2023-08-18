@@ -1,4 +1,9 @@
-# Shops program (smart contract)
+# Escrow program (smart contract)
+
+```
+... work in progress
+``` 
+
 This repository demonstrates how to create/deploy and use a simple program (smart contract) on the
 Solana blockchain.
 
