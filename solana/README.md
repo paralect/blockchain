@@ -1,7 +1,7 @@
 
 # Solana blockchain
 
-From medium to simple in order:  
+From medium to simple complexity in order:  
 - escrow
 - shop-ratings 
 - solana-greeting-program 
