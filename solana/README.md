@@ -1,7 +1,12 @@
 
 # Solana blockchain
 
-See the folders in this root path.
+From medium to simple in order:  
+- shop-ratings 
+- solana-greeting-program 
+- hello-world
+
+Select a folder to see more info, each folder is an independent project.
 
 ---- 
 
