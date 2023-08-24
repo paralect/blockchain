@@ -4,18 +4,43 @@ use solana_sdk::pubkey::Pubkey;
 use solana_sdk::signer::keypair::{read_keypair_file, Keypair};
 use yaml_rust::YamlLoader;
 
-/// The schema for Shop data in program derived accounts. This is what
+/// The schema for Escrow data in program derived accounts. This is what
 /// is serialized into the account and updated when hellos are sent.
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
-pub struct ShopSchema {
+pub struct EscrowSchema {
     pub buyer: Pubkey,
     pub paid_amount: u8,
+    pub refunded: bool,
+    pub post_delivered: bool,
 }
 
 #[derive(Copy, Clone)]
 pub enum ACTION {
     AddRating = 1,
     SetFirstRating = 2,
+}
+
+/// pretty_print
+pub fn pp(num: u64) -> String {
+    num.to_string().as_bytes().rchunks(3).rev().map(std::str::from_utf8)
+       .collect::<std::result::Result<Vec<&str>, _>>().unwrap().join("_")  
+       // _ is separator
+}
+
+pub fn get_args() -> Vec<String> {
+    let args = std::env::args().collect::<Vec<_>>();
+    if args.len() != 4 {
+        eprintln!(
+            "\nError: Wrong number of args.
+            usage: \n
+            cargo r ../program/target/deploy/helloworld-keypair.json r buyer1
+            cargo r ../program/target/deploy/helloworld-keypair.json w buyer1
+            (w: write, r: read)
+            ",
+        );
+        std::process::exit(-1);
+    }
+    args
 }
 
 /// Parses and returns the Solana yaml config on the system.
@@ -86,12 +111,12 @@ pub fn get_user() -> Result<Keypair> {
 pub fn seed_for_program_derived_account_creation() -> String {
     let str = std::env::args().collect::<Vec<_>>()[3].clone();
     str
-    // e.g. "shop1"
+    // e.g. "buyer1"
 }
 
 /// Derives and returns the program derived account public key for a given
 /// USER, PROGRAM combination.
-pub fn program_derived_account_key(user: &Pubkey, program: &Pubkey) -> Result<Pubkey> {
+pub fn pda_key(user: &Pubkey, program: &Pubkey) -> Result<Pubkey> {
     Ok(Pubkey::create_with_seed(
         user,
         &seed_for_program_derived_account_creation(),
@@ -99,10 +124,11 @@ pub fn program_derived_account_key(user: &Pubkey, program: &Pubkey) -> Result<Pu
     )?)
 }
 
-/// Determines and reports the size of Shop obj.
-pub fn get_shop_obj_size() -> Result<usize> {
-    let encoded = ShopSchema {
-            buyer: Pubkey::default(), paid_amount: 0
+/// Determines and reports the size of Program's obj.
+pub fn get_program_obj_size() -> Result<usize> {
+    let encoded = EscrowSchema {
+            buyer: Pubkey::default(), paid_amount: 0, refunded: false,
+            post_delivered: false
         }
         .try_to_vec()
         .map_err(|e| Error::SerializationError(e))?;
@@ -112,8 +138,8 @@ pub fn get_shop_obj_size() -> Result<usize> {
     // Ok(3 * 4) // array[u32, 3] = 12 bytes
 }
 
-pub fn get_shop_obj(data: &[u8]) -> Result<ShopSchema> {
-    let decoded = ShopSchema::try_from_slice(data).map_err(
+pub fn get_program_obj(data: &[u8]) -> Result<EscrowSchema> {
+    let decoded = EscrowSchema::try_from_slice(data).map_err(
         |e| Error::SerializationError(e)
     )?;
     Ok(decoded)
