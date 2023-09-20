@@ -1,7 +1,7 @@
 # Shops program (smart contract)
 This repository demonstrates how to create/deploy and use a simple program (smart contract) on the
 Solana blockchain.  
-This is an updated mirror. For latest changes see: https://github.com/simsekgokhan/shop-ratings  
+This is an updated mirror. For latest changes and commit history see: https://github.com/simsekgokhan/shop-ratings  
 
 Info: 
 - For simplicity, a Shop can have max 3 ratings (`struct Shop { ratings: [u32; 3] }`)
