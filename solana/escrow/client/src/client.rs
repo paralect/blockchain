@@ -328,17 +328,83 @@ pub fn is_post_delivered(
     user: &Keypair,
     program: &Keypair,
     connection: &RpcClient,
+) {
+    println!("\n4. Reading is_post_delivered ...");
+    use std::str::FromStr;
+    let chainlink_program = Pubkey::from_str("HEvSKofvBgfaexv23kMabbYqxasxU3mQ4ibBMEmJWHny").unwrap();
+    let feed_account = Pubkey::from_str("669U43LNHx7LsVj95uYksnhXUfWKDsdzVqev3V4Jpw3P").unwrap();
+    let _res = is_post_delivered_tx(&user, &program, &connection,
+        feed_account, chainlink_program);
+    // println!("_res: {:#?}", _res); // for debugging
+    let purchase_data = get_program_obj(&user, &program, &connection).unwrap();
+    println!("\nPurchase data (on chain):\n{:#?}\n", purchase_data);
+    println!("\nEND\n");
+}
+
+pub fn is_post_delivered_tx(
+    user: &Keypair,
+    program: &Keypair,
+    connection: &RpcClient,
     feed_account: Pubkey,
     chainlink_program: Pubkey,
 ) -> Result<()> {
     let pda = pda_key(&user.pubkey(), &program.pubkey())?;
     let instruction = Instruction::new_with_bytes(
         program.pubkey(),
-        &[2],
+        &[3],
         vec![
             AccountMeta::new(pda, false),
             AccountMeta::new_readonly(feed_account, false),
             AccountMeta::new_readonly(chainlink_program, false),
+        ],
+    );
+    let message = Message::new(&[instruction], Some(&user.pubkey()));
+    let transaction = Transaction::new(
+        &[user], message, connection.get_recent_blockhash()?.0
+    );
+
+    let _sig = connection.send_and_confirm_transaction(&transaction)?;
+    // println!("sig: {}", sig);
+
+    Ok(())
+}
+
+pub fn transfer_token_to(
+    user: &Keypair,
+    program: &Keypair,
+    connection: &RpcClient,
+    to: Pubkey, // token account
+) -> Result<()> {
+    println!("--- \ntransfer_token_to() {} ...", to);
+    let pda = pda_key(&user.pubkey(), &program.pubkey())?;
+    use std::str::FromStr;
+    // NFT - todo
+    // let token = Pubkey::from_str("AvDZLmBkWABdqyqCoqpGrSCwEeBYznirq2wWoQ9k3hUc").unwrap();
+    // FT
+    let token = Pubkey::from_str("5CazNWuHgCP6s4kqnqZB4N9BfURNQ4RUrpmVW6h6UfAh").unwrap();
+    let token_program = Pubkey::from_str("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA").unwrap();
+    let pda_token_acc = Pubkey::from_str("5vnCDs9eBNxA8S4LnftKC8bbA8eNH7mSy4hsqvFFwfPo").unwrap();
+    let my_token_acc = Pubkey::from_str("2ULuUe9z1fYKv5GC9UrFTztCQpnBsU8M3SjCoJVZh2GA").unwrap();
+
+    // 1. [writable] Token account we hold (from)
+    let source_token_account = my_token_acc;
+    // 2. [writable] Token account to send  (to)
+    let destination_token_account = pda_token_acc;
+    // 3. [signer] Source Token Account holder's PubKey
+    let source_token_account_holder = user.pubkey();
+    // 4. [] Token Program
+    // let token_program = next_account_info(accounts_iter)?;
+
+    let instruction = Instruction::new_with_bytes(
+        program.pubkey(),
+        &[4],
+        vec![
+            AccountMeta::new(pda, false),
+            AccountMeta::new(user.pubkey(), true),
+            AccountMeta::new(source_token_account, false),
+            AccountMeta::new(destination_token_account, false),
+            AccountMeta::new(source_token_account_holder, false),
+            AccountMeta::new_readonly(token_program, false),
         ],
     );
     let message = Message::new(&[instruction], Some(&user.pubkey()));

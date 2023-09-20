@@ -4,6 +4,7 @@ use zeke_contract as zc;
 use zc::client::{
     create_pda, get_program_obj, get_program, is_post_delivered,
     print_program_info, refund_to_buyer, run_balance_checks,
+    transfer_token_to,
     save_new_purchase_data, send_instruction
 };
 use zc::utils::{get_args, get_devnet_2_user, pp, pda_key};
@@ -47,22 +48,32 @@ fn main() {
     println!("--- buyer bal: {}", pp(buyer_balance_0));
     // println!("--- seller bal: {}", pp(connection.get_balance(&seller).unwrap()));        
 
-    if args[2] != "w" {
-        println!("\n4. Reading is_post_delivered ...");
-        use solana_sdk::pubkey::Pubkey;
-        use std::str::FromStr;
-        let chainlink_program = Pubkey::from_str("HEvSKofvBgfaexv23kMabbYqxasxU3mQ4ibBMEmJWHny").unwrap();
-        let feed_account = Pubkey::from_str("669U43LNHx7LsVj95uYksnhXUfWKDsdzVqev3V4Jpw3P").unwrap();
-        let _res = is_post_delivered(&user, &program, &connection,
-            feed_account, chainlink_program);
-        // println!("_res: {:#?}", _res); // for debugging
-        let purchase_data = get_program_obj(&user, &program, &connection).unwrap();
-        println!("\nPurchase data (on chain):\n{:#?}\n", purchase_data);
-        println!("\nEND\nProgram ended without write to chain\n");
+    // 4. is_post_delivered
+    if args[2] == "pd" { 
+        let _res = is_post_delivered(&user, &program, &connection);
+        // println!("res: {:#?}", _res);
         return
     }
 
-    // 4. write to chain
+    // todo: see err in lib.rs
+    // 4. transfer token to buyer
+    if args[2] == "ttb" { 
+        // is_post_delivered(&user, &program, &connection);
+        use solana_sdk::pubkey::Pubkey;
+        use std::str::FromStr;
+        // to: user aka 7GDX..ZAuc's token acc. 2ULu...h2GA
+        // let to = Pubkey::from_str("2ULuUe9z1fYKv5GC9UrFTztCQpnBsU8M3SjCoJVZh2GA").unwrap();
+        // to: buyer3's pda's token acc.
+        let to = Pubkey::from_str("5vnCDs9eBNxA8S4LnftKC8bbA8eNH7mSy4hsqvFFwfPo").unwrap();
+        let res = transfer_token_to(&user, &program, &connection, to);
+        println!("res: {:#?}", res);
+        return
+    }
+
+    //// 4. From this point run Story-2: Refund to buyer
+    //// - Buyer sends X SOL to Escrow
+    //// - Escrow ACTION::SavePurchaseData
+    //// - Escrow ACTION::RefundToBuyer
     const TEN_LAMPORTS: u64 = 10;
     println!("\n4. Write to chain: Sending transaction(s) ...");
 

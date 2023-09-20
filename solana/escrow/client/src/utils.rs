@@ -12,6 +12,7 @@ pub struct EscrowSchema {
     pub paid_amount: u8,
     pub refunded: bool,
     pub post_delivered: bool,
+    pub eth_usd_price: u32, // For development purposes
 }
 
 #[derive(Copy, Clone)]
@@ -29,18 +30,19 @@ pub fn pp(num: u64) -> String {
 
 pub fn get_args() -> Vec<String> {
     let args = std::env::args().collect::<Vec<_>>();
-    if args.len() != 4 {
-        eprintln!(
-            "\nError: Wrong number of args.
-            usage: \n
-            cargo r ../program/target/deploy/helloworld-keypair.json r buyer1
-            cargo r ../program/target/deploy/helloworld-keypair.json w buyer1
-            (w: write, r: read)
-            ",
-        );
-        std::process::exit(-1);
-    }
-    args
+    if args.len() == 4 { return args }    
+    eprintln!(
+    "\nError: Wrong number of args.
+       Usage:
+       // transfer token to buyer
+       cargo r ../program/target/deploy/escrow-keypair.json ttb buyer1
+       // check if post delivered
+       cargo r ../program/target/deploy/escrow-keypair.json pd buyer1
+       // Refund to buyer story
+       cargo r ../program/target/deploy/escrow-keypair.json w buyer1
+    ",
+    );
+    std::process::exit(-1);
 }
 
 /// Parses and returns the Solana yaml config on the system.
@@ -128,7 +130,7 @@ pub fn pda_key(user: &Pubkey, program: &Pubkey) -> Result<Pubkey> {
 pub fn get_program_obj_size() -> Result<usize> {
     let encoded = EscrowSchema {
             buyer: Pubkey::default(), paid_amount: 0, refunded: false,
-            post_delivered: false
+            post_delivered: false, eth_usd_price: 0
         }
         .try_to_vec()
         .map_err(|e| Error::SerializationError(e))?;
