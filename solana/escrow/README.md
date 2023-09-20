@@ -1,5 +1,7 @@
 # Escrow program (smart contract)
 
+This is a updated mirror. For latest changes see: https://github.com/simsekgokhan/escrow_solana  
+
 ```
 ... work in progress
 ``` 
