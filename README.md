@@ -2,7 +2,7 @@
 
 **New [2023]:** 
 - [Ethereum DAO contract, tests, truffle suite config.](ethereum/dao_ethereum)  
-- [Solana blockhain multiple projects](https://github.com/paralect/blockchain/tree/master/solana)   
+- [Solana blockhain multiple new projects](https://github.com/paralect/blockchain/tree/master/solana)   
 - R&D tasks for starters and learning: https://github.com/paralect/blockchain/issues  
 
 For people who prefers blog posts:  
