@@ -1,7 +1,9 @@
 # Blockchain Research & Dev. Project
 
-**New [2023]:** Solana blockhain: https://github.com/paralect/blockchain/tree/master/solana  
-**New [2023]:** R&D tasks for learning: https://github.com/paralect/blockchain/issues
+**New [2023]:** 
+- [Ethereum DAO contract, tests, truffle suite config.](ethereum/dao_ethereum)  
+- [Solana blockhain multiple new projects](https://github.com/paralect/blockchain/tree/master/solana)   
+- R&D tasks for starters and learning: https://github.com/paralect/blockchain/issues  
 
 For people who prefers blog posts:  
 https://blog.paralect.com/post/its-blockchain-101    
