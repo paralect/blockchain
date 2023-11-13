@@ -12,11 +12,21 @@ contract TestDao {
 
   function test_create_proposal() public {
     Dao dao = new Dao();
-    Assert.equal(0, dao.num_proposals(), "should be 0");
+    Assert.equal(dao.num_proposals(), 0, "should be 0");
     dao.create_proposal("foo");
-    Assert.equal(1, dao.num_proposals(), "should be 1");
-
-    // Assert.isTrue(keccak256(bytes(dao.proposals(0).name)) == keccak256("foo"), "aa");
+    Assert.equal(dao.num_proposals(), 1, "should be 1");
+    Assert.equal(dao.proposal_yes_votes(0), 0, "");
+    Assert.isTrue(keccak256(bytes(dao.proposal_name(0))) == keccak256("foo"), "");
   }
+
+  function test_change_proposal_name() public {
+    Dao dao = new Dao();
+    Assert.equal(dao.num_proposals(), 0, "should be 0");
+    dao.create_proposal("foo");
+    Assert.equal(dao.num_proposals(), 1, "should be 1");
+    Assert.isTrue(keccak256(bytes(dao.proposal_name(0))) == keccak256("foo"), "");
+    dao.change_proposal_name(0, "aaa");
+    Assert.isTrue(keccak256(bytes(dao.proposal_name(0))) == keccak256("aaa"), "");
+  }  
 
 }
