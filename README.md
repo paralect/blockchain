@@ -3,7 +3,8 @@
 **New [2023]:** 
 - [Ethereum *DAO contract, tests and truffle suite config](ethereum/dao_ethereum) (*Decentralized Autonomous Organization)  
 - [Solana blockhain multiple new projects](https://github.com/paralect/blockchain/tree/master/solana)   
-- R&D tasks for starters and learning: https://github.com/paralect/blockchain/issues  
+- R&D tasks for starters and learning: https://github.com/paralect/blockchain/issues
+- Blog post: [Introducing Parachain - Paralect's first private blockchain](https://docs.google.com/document/d/1bzLPJXGxCO30jloaOzsR2CqYAaL9jGGaAsrLqw8jRFU/edit?usp=sharing) [To-be-published] 
 
 For people who prefers blog posts:  
 https://blog.paralect.com/post/its-blockchain-101    
