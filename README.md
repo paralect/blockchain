@@ -1,7 +1,7 @@
 # Blockchain Research & Dev. Project
 
 **New [2023]:** 
-- Developing custom blockchain from scratch [Work in Progress]  
+- Developing custom blockchain from scratch (without using any SDK) [Work in Progress]  
 - [Building custom blockchain with Substrate SDK - Polkadot](https://docs.substrate.io/tutorials/build-a-blockchain/) [Done, to be documented]
 - [Ethereum *DAO contract, tests and truffle suite config](ethereum/dao_ethereum) (*Decentralized Autonomous Organization)  
 - [Solana blockhain multiple new projects](https://github.com/paralect/blockchain/tree/master/solana)   
